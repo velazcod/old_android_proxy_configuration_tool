@@ -61,6 +61,8 @@ public class WifiReceiver extends BroadcastReceiver
 	
 	private void enableProxy()
 	{
+		Log.d(Configuration.TAG, "Enabling proxy");
+		
 		ContentResolver res = context.getContentResolver();
 		String hostname = Configuration.DEFAULT_PROXY + ':' + Configuration.DEFAULT_PROXY_PORT;
 		
@@ -70,6 +72,8 @@ public class WifiReceiver extends BroadcastReceiver
 	
 	private void disableProxy()
 	{
+		Log.d(Configuration.TAG, "Disabling proxy");
+		
 		ContentResolver res = context.getContentResolver();
 		String hostname = "";
 		
