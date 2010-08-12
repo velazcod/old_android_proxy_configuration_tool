@@ -211,7 +211,9 @@ public class Configuration extends PreferenceActivity
     	String currentProxy = Settings.Secure.
     			getString(getContentResolver(), Settings.Secure.HTTP_PROXY);
 
-    	if (currentProxy != null)
+	Log.d(TAG, "currentProxy: " + currentProxy);
+
+    	if (currentProxy != null || !currentProxy.equals(""))
     		state = true;
     	
     	return state;
