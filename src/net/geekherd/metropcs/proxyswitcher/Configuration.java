@@ -5,7 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Proxy;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -57,7 +61,14 @@ public class Configuration extends PreferenceActivity
 	private EditTextPreference prefs_custom_proxy;
 	private EditTextPreference prefs_custom_proxy_port;
 	
-	
+	private BroadcastReceiver mProxyChangeActionReceiver = new BroadcastReceiver()
+	{
+    	@Override
+		public void onReceive(Context context, Intent intent) 
+		{
+    		new checkStatus().execute();
+		}
+	};
 	
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -72,19 +83,29 @@ public class Configuration extends PreferenceActivity
         prefs_use_custom_proxy = (CheckBoxPreference)findPreference("prefs_use_custom_proxy");
         prefs_custom_proxy = (EditTextPreference)findPreference("prefs_custom_proxy");
         prefs_custom_proxy_port = (EditTextPreference)findPreference("prefs_custom_proxy_port");
+        
+        prefs_use_custom_proxy.setOnPreferenceChangeListener(customProxyCheckboxListener);
     }
     
     @Override
 	protected void onResume()
 	{
 		super.onResume();
+		
+		updateCustomProxySummary(prefs_use_custom_proxy.isChecked());
+		
 		new checkStatus().execute();
+		
+		this.registerReceiver(this.mProxyChangeActionReceiver, 
+				new IntentFilter(Proxy.PROXY_CHANGE_ACTION));
 	}
     
     @Override
 	protected void onStop()
 	{
 		super.onStop();
+		
+		this.unregisterReceiver(this.mProxyChangeActionReceiver);
 		
 		Boolean customProxyValid = true;
 		Boolean customProxyPortValid = true;
@@ -132,9 +153,7 @@ public class Configuration extends PreferenceActivity
     	String key = preference.getKey();
     	
     	if (TOGGLE_ACTIVATE.equals(key))
-    	{
-    		disableToggles();
-    		
+    	{	
     		Intent sIntent = new Intent(this, Toggler.class);
     		sIntent.setAction(ACTION_ACTIVATE_PROXY);
     		sendBroadcast(sIntent);
@@ -143,8 +162,6 @@ public class Configuration extends PreferenceActivity
     	} 
     	else if (TOGGLE_DEACTIVATE.equals(key))
     	{
-    		disableToggles();
-    		
     		Intent sIntent = new Intent(this, Toggler.class);
     		sIntent.setAction(ACTION_DEACTIVATE_PROXY);
     		sendBroadcast(sIntent);
@@ -172,12 +189,17 @@ public class Configuration extends PreferenceActivity
     	String proxyStatus = getString(R.string.status_inactive);
     	String u2nlStatus = getString(R.string.status_inactive);
     	
-    	@Override
-		protected Boolean doInBackground(final Void... params) 
-		{
+    	protected void onPreExecute()
+    	{
     		Log.d(TAG, "checking proxy/u2nl status");
     		proxy_status.setSummary(getString(R.string.status_checking));
     		
+    		disableToggles();
+    	}
+    	
+    	@Override
+		protected Boolean doInBackground(final Void... params) 
+		{
     		try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
@@ -204,6 +226,39 @@ public class Configuration extends PreferenceActivity
     	}
 	}
     
+    private Preference.OnPreferenceChangeListener 
+    	customProxyCheckboxListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(newValue);
+			
+			return true;
+		}
+	};
+    
+    private void updateCustomProxySummary(Object value)
+    {
+    	if (value.equals(true))
+    	{
+    		prefs_custom_proxy.setSummary(String.format(
+    				getString(R.string.prefs_custom_proxy_sryOn), 
+    				prefs_custom_proxy.getText()));
+    		prefs_custom_proxy_port.setSummary(String.format(
+    				getString(R.string.prefs_custom_proxy_port_sryOn), 
+    				prefs_custom_proxy_port.getText()));
+    	}
+    	else
+    	{
+    		prefs_custom_proxy.setSummary(String.format(
+    				getString(R.string.prefs_custom_proxy_sryOff), 
+    				DEFAULT_PROXY));
+    		prefs_custom_proxy_port.setSummary(String.format(
+    				getString(R.string.prefs_custom_proxy_port_sryOff), 
+    				DEFAULT_PROXY_PORT));
+    	}
+    }
+    
     private boolean isProxyActive()
     {
     	Boolean state = false;
@@ -211,9 +266,9 @@ public class Configuration extends PreferenceActivity
     	String currentProxy = Settings.Secure.
     			getString(getContentResolver(), Settings.Secure.HTTP_PROXY);
 
-	Log.d(TAG, "currentProxy: " + currentProxy);
+    	Log.d(TAG, "currentProxy: " + currentProxy);
 
-    	if (currentProxy != null || !currentProxy.equals(""))
+    	if (currentProxy != null)
     		state = true;
     	
     	return state;
