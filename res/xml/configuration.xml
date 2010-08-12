@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<PreferenceCategory android:title="@string/status" >
+	
+		<PreferenceScreen
+			android:key="proxy_status"
+			android:title="@string/proxy_status"
+			android:summary="@string/status_checking" />
+	
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/toggles" >
+	
+		<PreferenceScreen
+			android:key="toggle_activate"
+			android:title="@string/toggle_activate"
+			android:summary="@string/toggle_activate_sry"
+			android:enabled="false" />
+			
+		<PreferenceScreen
+			android:key="toggle_deactivate"
+			android:title="@string/toggle_deactivate"
+			android:summary="@string/toggle_deactivate_sry"
+			android:enabled="false" />
+	
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/configuration" >
+		
+		<CheckBoxPreference 
+			android:key="prefs_autoswitch_enabled"
+			android:title="@string/prefs_autoswitch_enabled"
+			android:summary="@string/prefs_autoswitch_enabled_sry"
+			android:defaultValue="true" />
+		
+		<CheckBoxPreference 
+			android:key="prefs_use_u2nl"
+			android:title="@string/prefs_use_u2nl"
+			android:summary="@string/prefs_use_u2nl_sry"
+			android:defaultValue="true" />
+			
+		<CheckBoxPreference 
+			android:key="prefs_use_custom_proxy"
+			android:title="@string/prefs_use_custom_proxy"
+			android:summary="@string/prefs_use_custom_proxy_sry"
+			android:defaultValue="false" />
+			
+		<EditTextPreference 
+			android:key="prefs_custom_proxy"
+			android:title="@string/prefs_custom_proxy"
+			android:summary="@string/prefs_custom_proxy_sryOff"
+			android:dependency="prefs_use_custom_proxy"
+			android:defaultValue=""
+			android:lines="1"
+      		android:maxLines="1"
+      		android:maxLength="15"
+      		android:digits="0123456789."
+      		android:inputType="phone" />
+      		
+      	<EditTextPreference 
+			android:key="prefs_custom_proxy_port"
+			android:title="@string/prefs_custom_proxy_port"
+			android:summary="@string/prefs_custom_proxy_port_sryOff"
+			android:dependency="prefs_use_custom_proxy"
+			android:defaultValue=""
+			android:lines="1"
+      		android:maxLines="1"
+      		android:maxLength="5"
+      		android:digits="0123456789"
+      		android:inputType="phone" />
+	
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/credits" >
+	
+		<PreferenceScreen
+			android:key="prefs_credits"
+			android:title="@string/credits"
+			android:summary="@string/credits_sry" />
+			
+	</PreferenceCategory>
+		
+</PreferenceScreen>
