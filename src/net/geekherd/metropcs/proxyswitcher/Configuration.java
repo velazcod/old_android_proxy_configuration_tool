@@ -157,16 +157,12 @@ public class Configuration extends PreferenceActivity
     		Intent sIntent = new Intent(this, Toggler.class);
     		sIntent.setAction(ACTION_ACTIVATE_PROXY);
     		sendBroadcast(sIntent);
-    		
-    		new checkStatus().execute();
     	} 
     	else if (TOGGLE_DEACTIVATE.equals(key))
     	{
     		Intent sIntent = new Intent(this, Toggler.class);
     		sIntent.setAction(ACTION_DEACTIVATE_PROXY);
     		sendBroadcast(sIntent);
-    		
-    		new checkStatus().execute();
     	}
     	
     	return true;
