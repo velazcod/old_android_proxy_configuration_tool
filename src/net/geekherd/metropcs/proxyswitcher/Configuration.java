@@ -235,17 +235,29 @@ public class Configuration extends PreferenceActivity
     
     private void updateCustomProxySummary(Object value)
     {
-    	if (value.equals(true))
+	
+	String customProxy = prefs_custom_proxy.getText();
+	String customProxyPort = prefs_custom_proxy_port.getText();
+	
+    	if ((value.equals(true)) 
     	{
-    		prefs_custom_proxy.setSummary(String.format(
-    				getString(R.string.prefs_custom_proxy_sryOn), 
-    				prefs_custom_proxy.getText()));
-    		prefs_custom_proxy_port.setSummary(String.format(
-    				getString(R.string.prefs_custom_proxy_port_sryOn), 
-    				prefs_custom_proxy_port.getText()));
-    	}
-    	else
-    	{
+
+		//TODO: VALIDATE THIS IN A BETTER WAY. JUST LIKE WE ARE DOING onStop()
+		
+		if (!customProxy.equals("")) && (!customProxyPort.equals(""))
+		{
+    			prefs_custom_proxy.setSummary(String.format(
+    					getString(R.string.prefs_custom_proxy_sryOn), 
+    					prefs_custom_proxy.getText()));
+    			prefs_custom_proxy_port.setSummary(String.format(
+    					getString(R.string.prefs_custom_proxy_port_sryOn), 
+    					prefs_custom_proxy_port.getText()));
+		} else {
+			prefs_custom_proxy.setSummary(getString(R.string.prefs_custom_proxy_invalid));
+			prefs_custom_proxy_port.setSummary(getString(R.string.prefs_custom_proxy_invalid));
+		}
+
+    	} else {
     		prefs_custom_proxy.setSummary(String.format(
     				getString(R.string.prefs_custom_proxy_sryOff), 
     				DEFAULT_PROXY));

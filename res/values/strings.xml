@@ -43,6 +43,7 @@
     	<string name="prefs_custom_proxy">Custom proxy</string>
     	<string name="prefs_custom_proxy_sryOn">Using: %s</string>
     	<string name="prefs_custom_proxy_sryOff">Using default proxy: %s</string>
+	<string name="prefs_custom_proxy_invalid">Invalid proxy IP address and/or port</string>
 
 		<string name="prefs_custom_proxy_port">Custom port</string>
     	<string name="prefs_custom_proxy_port_sryOn">Using: %s</string>
