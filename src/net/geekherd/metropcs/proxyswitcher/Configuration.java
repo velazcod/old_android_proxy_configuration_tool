@@ -56,7 +56,9 @@ public class Configuration extends PreferenceActivity
 	private PreferenceScreen proxy_status;
 	private PreferenceScreen toggle_activate;
 	private PreferenceScreen toggle_deactivate;
-    
+
+	private CheckBoxPreference prefs_use_u2nl;  
+ 
 	private CheckBoxPreference prefs_use_custom_proxy;
 	private EditTextPreference prefs_custom_proxy;
 	private EditTextPreference prefs_custom_proxy_port;
@@ -79,7 +81,9 @@ public class Configuration extends PreferenceActivity
         proxy_status = (PreferenceScreen)findPreference("proxy_status");
         toggle_activate = (PreferenceScreen)findPreference("toggle_activate");
         toggle_deactivate = (PreferenceScreen)findPreference("toggle_deactivate");
-        
+       
+	prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
+ 
         prefs_use_custom_proxy = (CheckBoxPreference)findPreference("prefs_use_custom_proxy");
         prefs_custom_proxy = (EditTextPreference)findPreference("prefs_custom_proxy");
         prefs_custom_proxy_port = (EditTextPreference)findPreference("prefs_custom_proxy_port");
@@ -172,12 +176,18 @@ public class Configuration extends PreferenceActivity
     {
     	toggle_activate.setEnabled(false);
     	toggle_deactivate.setEnabled(false);
+
+	prefs_use_u2nl.setEnabled(false);	
+	prefs_use_custom_proxy.setEnabled(false);
     }
     
     private void enableToggles()
     {
     	toggle_activate.setEnabled(true);
     	toggle_deactivate.setEnabled(true);
+
+	prefs_use_u2nl.setEnabled(true);
+        prefs_use_custom_proxy.setEnabled(true);
     }
     
     private class checkStatus extends AsyncTask<Void, Void, Boolean> 
