@@ -82,13 +82,15 @@ public class Configuration extends PreferenceActivity
         toggle_activate = (PreferenceScreen)findPreference("toggle_activate");
         toggle_deactivate = (PreferenceScreen)findPreference("toggle_deactivate");
        
-	prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
+        prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
  
         prefs_use_custom_proxy = (CheckBoxPreference)findPreference("prefs_use_custom_proxy");
         prefs_custom_proxy = (EditTextPreference)findPreference("prefs_custom_proxy");
         prefs_custom_proxy_port = (EditTextPreference)findPreference("prefs_custom_proxy_port");
         
         prefs_use_custom_proxy.setOnPreferenceChangeListener(customProxyCheckboxListener);
+        prefs_custom_proxy.setOnPreferenceChangeListener(customProxyEditTextListener);
+        prefs_custom_proxy_port.setOnPreferenceChangeListener(customProxyPortEditTextListener);
     }
     
     @Override
@@ -96,7 +98,7 @@ public class Configuration extends PreferenceActivity
 	{
 		super.onResume();
 		
-		updateCustomProxySummary(prefs_use_custom_proxy.isChecked());
+		updateCustomProxySummary(prefs_use_custom_proxy.isChecked(), null, null);
 		
 		new checkStatus().execute();
 		
@@ -111,43 +113,17 @@ public class Configuration extends PreferenceActivity
 		
 		this.unregisterReceiver(this.mProxyChangeActionReceiver);
 		
-		Boolean customProxyValid = true;
-		Boolean customProxyPortValid = true;
-		
 		if (prefs_use_custom_proxy.isChecked())
 		{
-			if (!validateIP(prefs_custom_proxy.getText()))
+			if (!testCustomProxy(null, null))
 			{
-				Log.e(TAG, "Invalid ip address");
-				customProxyValid = false;
-			}
-			
-			try
-			{
-				int port = Integer.parseInt(prefs_custom_proxy_port.getText());
+				prefs_use_custom_proxy.setChecked(false);
+				prefs_custom_proxy.setText("");
+				prefs_custom_proxy_port.setText("");
 				
-				if (port < 0 || port > 65535)
-				{
-					Log.e(TAG, "Invalid port number");
-					customProxyPortValid = false;
-				}
-				
-			} catch (NumberFormatException npe)
-			{
-				npe.printStackTrace();
-				Log.e(TAG, "Invalid port number");
-				customProxyPortValid = false;
+				Log.d(TAG, "Invalid ip address and/or port number. Cannot use custom proxy.");
+				Toast.makeText(this, getString(R.string.prefs_use_custom_proxy_error), Toast.LENGTH_LONG).show();
 			}
-		}
-		
-		if (!customProxyValid || !customProxyPortValid)
-		{
-			prefs_use_custom_proxy.setChecked(false);
-			prefs_custom_proxy.setText("");
-			prefs_custom_proxy_port.setText("");
-			
-			Log.d(TAG, "Invalid ip address and/or port number. Cannot use custom proxy.");
-			Toast.makeText(this, getString(R.string.prefs_use_custom_proxy_error), Toast.LENGTH_LONG).show();
 		}
 	}
     
@@ -237,35 +213,67 @@ public class Configuration extends PreferenceActivity
 	{
 		public boolean onPreferenceChange(Preference preference, Object newValue) 
 		{
-			updateCustomProxySummary(newValue);
+			updateCustomProxySummary(newValue, null, null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(true, newValue.toString(), null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyPortEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(true, null, newValue.toString());
 			
 			return true;
 		}
 	};
     
-    private void updateCustomProxySummary(Object value)
+    private void updateCustomProxySummary(Object value, String proxy, String port)
     {
-	
-	String customProxy = prefs_custom_proxy.getText();
-	String customProxyPort = prefs_custom_proxy_port.getText();
-	
-    	if ((value.equals(true)) 
+    	String customProxy;
+    	String customPort;
+    	
+    	if (proxy != null)
+    		customProxy = proxy;
+    	else
+    		customProxy = prefs_custom_proxy.getText();
+    	
+    	if (port != null)
+    		customPort = port;
+    	else
+    		customPort = prefs_custom_proxy_port.getText();
+    	
+    	if (value.equals(true))
     	{
-
-		//TODO: VALIDATE THIS IN A BETTER WAY. JUST LIKE WE ARE DOING onStop()
-		
-		if (!customProxy.equals("")) && (!customProxyPort.equals(""))
-		{
-    			prefs_custom_proxy.setSummary(String.format(
-    					getString(R.string.prefs_custom_proxy_sryOn), 
-    					prefs_custom_proxy.getText()));
-    			prefs_custom_proxy_port.setSummary(String.format(
-    					getString(R.string.prefs_custom_proxy_port_sryOn), 
-    					prefs_custom_proxy_port.getText()));
-		} else {
-			prefs_custom_proxy.setSummary(getString(R.string.prefs_custom_proxy_invalid));
-			prefs_custom_proxy_port.setSummary(getString(R.string.prefs_custom_proxy_invalid));
-		}
+			if (testCustomProxy(customProxy, customPort))
+			{
+					Log.d(TAG, "custom proxy is valid!");
+				
+	    			prefs_custom_proxy.setSummary(String.format(
+	    					getString(R.string.prefs_custom_proxy_sryOn), 
+	    					customProxy));
+	    			prefs_custom_proxy_port.setSummary(String.format(
+	    					getString(R.string.prefs_custom_proxy_port_sryOn), 
+	    					customPort));
+			} else {
+				Log.d(TAG, "custom proxy is invalid!");
+				
+				prefs_custom_proxy.setSummary(getString(R.string.prefs_custom_proxy_invalid));
+				prefs_custom_proxy_port.setSummary(getString(R.string.prefs_custom_proxy_invalid));
+			}
 
     	} else {
     		prefs_custom_proxy.setSummary(String.format(
@@ -277,6 +285,50 @@ public class Configuration extends PreferenceActivity
     	}
     }
     
+    private boolean testCustomProxy(String proxy, String port)
+    {
+		Boolean validProxy = true;
+		
+		String customProxy;
+		String customPort;
+		
+		if (proxy !=null)
+			customProxy = proxy;
+		else
+			customProxy = prefs_custom_proxy.getText();
+		
+		
+		if (port != null)
+			customPort = port;
+		else
+			customPort = prefs_custom_proxy_port.getText();
+		
+		if (!validateIP(customProxy))
+		{
+			Log.e(TAG, "Invalid ip address");
+			validProxy = false;
+		}
+		
+		try
+		{
+			int portInt = Integer.parseInt(customPort);
+			
+			if (portInt < 0 || portInt > 65535)
+			{
+				Log.e(TAG, "Invalid port number");
+				validProxy = false;
+			}
+			
+		} catch (NumberFormatException npe)
+		{
+			npe.printStackTrace();
+			Log.e(TAG, "Invalid port number");
+			validProxy = false;
+		}
+		
+    	return validProxy;
+    }
+    
     private boolean isProxyActive()
     {
     	Boolean state = false;
@@ -286,7 +338,7 @@ public class Configuration extends PreferenceActivity
 
     	Log.d(TAG, "currentProxy: " + currentProxy);
 
-    	if (currentProxy != null)
+    	if (!currentProxy.equals(""))
     		state = true;
     	
     	return state;
