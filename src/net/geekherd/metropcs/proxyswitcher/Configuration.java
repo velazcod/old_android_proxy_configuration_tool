@@ -27,8 +27,9 @@ public class Configuration extends PreferenceActivity
 	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server
 	public final static String DEFAULT_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
 
-	public final static String DEFAULT_INTERFACE_MOTO = "ppp0"; //INTERFACE USED BY IPTABLES
-	public final static String DEFAULT_INTERFACE_HTC = "rmnet0"; //INTERFACE USED BY IPTABLES
+	public final static String DEFAULT_INTERFACE = "ppp0"; //INTERFACE USED BY IPTABLES
+	public final static String DEFAULT_INTERFACE_SHOLES = "ppp0"; //INTERFACE USED ON MOTOROLA DROID
+	public final static String DEFAULT_INTERFACE_INC = "rmnet0"; //INTERFACE USED ON HTC DROID INCREDIBLE
 	
 	public static String ACTION_ACTIVATE_PROXY = "ActivateProxy";
 	public static String ACTION_DEACTIVATE_PROXY = "DectivateProxy";

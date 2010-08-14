@@ -18,17 +18,17 @@ public class Toggler extends BroadcastReceiver
 	private Context context;
 	private SharedPreferences preferences;
 	
-	private Boolean useCustomProxy;
-	private Boolean useU2NL;
+	private Boolean mUseCustomProxy;
+	private Boolean mUseU2NL;
 	
-	private String customProxy;
-	private String customProxyPort;
+	private String mCustomProxy;
+	private String mCustomProxyPort;
 	
-	private String hostname;
-	private String proxy;
-	private String port;
+	private String mHostname;
+	private String mProxy;
+	private String mPort;
 
-	private String interface;	
+	private String mInterface;	
 	
 	@Override
 	public void onReceive(Context context, Intent intent) 
@@ -58,32 +58,38 @@ public class Toggler extends BroadcastReceiver
 	
 	private void loadPreferences()
 	{
-		useCustomProxy = preferences.
+		mUseCustomProxy = preferences.
 			getBoolean(Configuration.PREF_USE_CUSTOM_PROXY, false);
 		
-		customProxy = preferences.
+		mCustomProxy = preferences.
 			getString(Configuration.PREF_PROXY, Configuration.PREF_PROXY_DEFAULT);
 		
-		customProxyPort = preferences.
+		mCustomProxyPort = preferences.
 			getString(Configuration.PREF_PROXY_PORT, Configuration.PREF_PROXY_PORT_DEFAULT);
 		
-		useU2NL = preferences.getBoolean(Configuration.PREF_USE_U2NL, 
+		mUseU2NL = preferences.getBoolean(Configuration.PREF_USE_U2NL, 
 				Configuration.PREF_USE_U2NL_DEFAULT);
 		
-		//TODO: put a check here!
-		interface = Configuration.DEFAULT_INTERFACE_MOTO;
+		if (android.os.Build.DEVICE.equals("sholes"))
+			mInterface = Configuration.DEFAULT_INTERFACE_SHOLES;
+		else if (android.os.Build.DEVICE.equals("inc"))
+			mInterface = Configuration.DEFAULT_INTERFACE_INC;
+		else
+			mInterface = Configuration.DEFAULT_INTERFACE;
+		
+		Log.d(Configuration.TAG, "Interface for " + android.os.Build.DEVICE + ": " + mInterface);
 
-		if (useCustomProxy)
+		if (mUseCustomProxy)
 		{
-			hostname = customProxy + ':' + customProxyPort;
-			proxy = customProxy;
-			port = customProxyPort;
+			mHostname = mCustomProxy + ':' + mCustomProxyPort;
+			mProxy = mCustomProxy;
+			mPort = mCustomProxyPort;
 		}
 		else
 		{
-			hostname = Configuration.DEFAULT_PROXY + ':' + Configuration.DEFAULT_PROXY_PORT;
-			proxy = Configuration.DEFAULT_PROXY;
-			port = Configuration.DEFAULT_PROXY_PORT;
+			mHostname = Configuration.DEFAULT_PROXY + ':' + Configuration.DEFAULT_PROXY_PORT;
+			mProxy = Configuration.DEFAULT_PROXY;
+			mPort = Configuration.DEFAULT_PROXY_PORT;
 		}
 	}
 	
@@ -93,7 +99,7 @@ public class Toggler extends BroadcastReceiver
 		
 		ContentResolver res = context.getContentResolver();
 				
-		Settings.Secure.putString(res, Settings.Secure.HTTP_PROXY, hostname);
+		Settings.Secure.putString(res, Settings.Secure.HTTP_PROXY, mHostname);
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
@@ -110,7 +116,7 @@ public class Toggler extends BroadcastReceiver
 	
 	private void enableU2NL()
 	{
-		if (!useU2NL)
+		if (!mUseU2NL)
 			return;
 		
 		Log.d(Configuration.TAG, "Enabling U2NL");
@@ -148,10 +154,10 @@ public class Toggler extends BroadcastReceiver
 		try { os.writeBytes("iptables -X" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
-		try { os.writeBytes("iptables -t nat -A OUTPUT -o rmnet0 -p 6 ! -d " + proxy + " -j REDIRECT --to-port " + port + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 ! -d " + mProxy + " -j REDIRECT --to-port " + mPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
-		try { os.writeBytes("u2nl " + proxy + " " + port + " 127.0.0.1 1025 >/dev/null 2>&1 &" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.writeBytes("u2nl " + mProxy + " " + mPort + " 127.0.0.1 1025 >/dev/null 2>&1 &" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
 		try { os.writeBytes("exit\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
@@ -162,7 +168,7 @@ public class Toggler extends BroadcastReceiver
 	
 	private void disableU2NL()
 	{
-		if (!useU2NL)
+		if (!mUseU2NL)
 			return;
 		
 		Log.d(Configuration.TAG, "Disabling U2NL");
