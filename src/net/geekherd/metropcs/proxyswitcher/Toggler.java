@@ -71,9 +71,13 @@ public class Toggler extends BroadcastReceiver
 				Configuration.PREF_USE_U2NL_DEFAULT);
 		
 		if (android.os.Build.DEVICE.equals("sholes"))
-			mInterface = Configuration.DEFAULT_INTERFACE_SHOLES;
+			mInterface = Configuration.DEFAULT_INTERFACE_MOTO_SHOLES;
 		else if (android.os.Build.DEVICE.equals("inc"))
-			mInterface = Configuration.DEFAULT_INTERFACE_INC;
+			mInterface = Configuration.DEFAULT_INTERFACE_HTC;
+		else if (android.os.Build.DEVICE.equals("hero"))
+			mInterface = Configuration.DEFAULT_INTERFACE_HTC;
+		else if (android.os.Build.DEVICE.equals("supersonic"))
+			mInterface = Configuration.DEFAULT_INTERFACE_HTC;
 		else
 			mInterface = Configuration.DEFAULT_INTERFACE;
 		
