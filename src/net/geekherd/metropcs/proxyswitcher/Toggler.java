@@ -27,7 +27,8 @@ public class Toggler extends BroadcastReceiver
 	private String hostname;
 	private String proxy;
 	private String port;
-	
+
+	private String interface;	
 	
 	@Override
 	public void onReceive(Context context, Intent intent) 
@@ -69,6 +70,9 @@ public class Toggler extends BroadcastReceiver
 		useU2NL = preferences.getBoolean(Configuration.PREF_USE_U2NL, 
 				Configuration.PREF_USE_U2NL_DEFAULT);
 		
+		//TODO: put a check here!
+		interface = Configuration.DEFAULT_INTERFACE_MOTO;
+
 		if (useCustomProxy)
 		{
 			hostname = customProxy + ':' + customProxyPort;
