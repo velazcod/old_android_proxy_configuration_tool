@@ -13,6 +13,12 @@
             </intent-filter>
         </activity>
 		
+		<receiver android:name=".BootReceiver">
+			<intent-filter> 
+				<action android:name="android.intent.action.BOOT_COMPLETED"/> 
+			</intent-filter> 
+		</receiver>
+		
 		<receiver android:name=".WifiReceiver">
 			<intent-filter> 
 				<action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
@@ -26,7 +32,7 @@
 					<action android:name="net.geekherd.metropcs.proxyswitcher.Configuration.ACTION_ACTIVATE_PROXY" />
 					<action android:name="net.geekherd.metropcs.proxyswitcher.Configuration.ACTION_DEACTIVATE_PROXY" />
 				</intent-filter>
-	        </receiver>
+		</receiver>
 
     </application>
     <uses-sdk 
@@ -38,6 +44,7 @@
 	<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
