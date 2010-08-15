@@ -29,5 +29,11 @@ public class BootReceiver extends BroadcastReceiver
 				context.sendBroadcast(sIntent);
 			}
 		}
+		else
+		{
+			Intent sIntent = new Intent(context, Toggler.class);
+			sIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
+			context.sendBroadcast(sIntent);
+		}
 	}
 }
