@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 public class BootReceiver extends BroadcastReceiver 
 {
@@ -14,8 +13,6 @@ public class BootReceiver extends BroadcastReceiver
 	{
 		NetworkInfo info = (NetworkInfo)intent.
 			getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-		
-		Log.d(Configuration.TAG, "NetworkInfo: " + info);
 		
 		if (info != null)
 		{
