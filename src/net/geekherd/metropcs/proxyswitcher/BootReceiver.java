@@ -14,17 +14,20 @@ public class BootReceiver extends BroadcastReceiver
 		NetworkInfo info = (NetworkInfo)intent.
 			getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 		
-		if (info.getState().equals(NetworkInfo.State.CONNECTED))
+		if (info.getState() != null)
 		{
-			Intent sIntent = new Intent(context, Toggler.class);
-			sIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
-			context.sendBroadcast(sIntent);
-		}
-		else
-		{
-			Intent sIntent = new Intent(context, Toggler.class);
-			sIntent.setAction(Configuration.ACTION_DEACTIVATE_PROXY);
-			context.sendBroadcast(sIntent);
+			if (info.getState().equals(NetworkInfo.State.CONNECTED))
+			{
+				Intent sIntent = new Intent(context, Toggler.class);
+				sIntent.setAction(Configuration.ACTION_DEACTIVATE_PROXY);
+				context.sendBroadcast(sIntent);
+			}
+			else
+			{
+				Intent sIntent = new Intent(context, Toggler.class);
+				sIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
+				context.sendBroadcast(sIntent);
+			}
 		}
 	}
 }
