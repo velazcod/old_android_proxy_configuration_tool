@@ -23,8 +23,19 @@ import android.widget.Toast;
 
 public class Configuration extends PreferenceActivity 
 {
+	/*
+	 * 
+	 * Main screen.
+	 * We use this activity to allow the user to manually activate/deactivate proxy,
+	 * as well as change default settings for the proxy.
+	 * 
+	 * Can be improved.
+	 * 
+	 */
+	
+	
 	public final static String TAG = "MetroPCS-ProxySwitcher";
-	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server
+	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com)
 	public final static String DEFAULT_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
 
 	public final static String DEFAULT_INTERFACE = "rmnet0"; //INTERFACE USED BY IPTABLES

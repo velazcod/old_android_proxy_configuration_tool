@@ -56,6 +56,9 @@ public class Toggler extends BroadcastReceiver
 		}
 	}
 	
+	/*
+	 * Pre-load default variables and settings
+	 */
 	private void loadPreferences()
 	{
 		mUseCustomProxy = preferences.
@@ -97,6 +100,9 @@ public class Toggler extends BroadcastReceiver
 		}
 	}
 	
+	/*
+	 * Put proxy settings on system secure settings. Will automatically activate proxy
+	 */
 	private void enableProxy()
 	{
 		Log.d(Configuration.TAG, "Enabling proxy");
@@ -107,6 +113,9 @@ public class Toggler extends BroadcastReceiver
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
+	/*
+	 * Remove proxy server from system. Will automatically disable proxy
+	 */
 	private void disableProxy()
 	{
 		Log.d(Configuration.TAG, "Disabling proxy");
@@ -118,6 +127,9 @@ public class Toggler extends BroadcastReceiver
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
+	/*
+	 * Start up u2nl binary and tunnel all connections thru proxy. Can be improved
+	 */
 	private void enableU2NL()
 	{
 		if (!mUseU2NL)
@@ -170,6 +182,9 @@ public class Toggler extends BroadcastReceiver
 		
 	}
 	
+	/*
+	 * Kill u2nl. Can be improved.
+	 */
 	private void disableU2NL()
 	{
 		if (!mUseU2NL)

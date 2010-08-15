@@ -11,6 +11,10 @@ import android.util.Log;
 
 public class WifiReceiver extends BroadcastReceiver 
 {	
+	
+	/*
+	 * Receive broadcast to let us know wifi/network connection has changed
+	 */
 	@Override
 	public void onReceive(Context context, Intent intent) 
 	{
@@ -70,6 +74,9 @@ public class WifiReceiver extends BroadcastReceiver
 		}
 	}
 
+	/*
+	 * Send broadcast intent to activate proxy & u2nl
+	 */
 	private void toggleActivate(Context context) 
 	{	
 		Intent sIntent = new Intent(context, Toggler.class);
@@ -77,6 +84,9 @@ public class WifiReceiver extends BroadcastReceiver
 		context.sendBroadcast(sIntent);
 	}
 	
+	/*
+	 * Send broadcast intent to deactivate proxy & u2nl
+	 */
 	private void toggleDeactivate(Context context) 
 	{
 		Intent sIntent = new Intent(context, Toggler.class);
