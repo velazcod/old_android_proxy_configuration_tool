@@ -3,7 +3,7 @@
     <string name="app_name">MetroPCS Proxy Configuration</string>
     
     <string name="credits">Credits</string>
-    <string name="credits_sry">Developed by Daniel Velazco (velazcod@gmail.com)</string>
+    <string name="credits_sry">Developed by Daniel Velazco\nvelazcod@gmail.com</string>
     
     <!-- Status -->
     	<string name="status">Status</string>
