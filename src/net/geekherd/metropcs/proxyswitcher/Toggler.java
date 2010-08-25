@@ -12,6 +12,7 @@ import android.net.Proxy;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Toggler extends BroadcastReceiver
 {
@@ -44,15 +45,29 @@ public class Toggler extends BroadcastReceiver
 		{
 			Log.d(Configuration.TAG, "ACTION_ACTIVATE_PROXY action");
 			
-			enableProxy();
-			enableU2NL();
+			try 
+			{
+				enableProxy();
+				enableU2NL();
+			} catch (Exception e) {
+				Log.e(Configuration.TAG, "", e);
+				e.printStackTrace();
+				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
+			}
 		}
 		else if (action.equals(Configuration.ACTION_DEACTIVATE_PROXY))
 		{
 			Log.d(Configuration.TAG, "ACTION_DEACTIVATE_PROXY action");
 			
-			disableProxy();
-			disableU2NL();
+			try 
+			{
+				disableProxy();
+				disableU2NL();
+			} catch (Exception e) {
+				Log.e(Configuration.TAG, "", e);
+				e.printStackTrace();
+				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 	
