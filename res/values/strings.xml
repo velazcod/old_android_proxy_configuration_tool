@@ -3,7 +3,9 @@
     <string name="app_name">MetroPCS Proxy Configuration</string>
     
     <string name="credits">Credits</string>
+    <string name="credits_ok">Ok</string>
     <string name="credits_sry">Developed by Daniel Velazco\nvelazcod@gmail.com</string>
+    <string name="credits_txt">Special thanks go out to Tracphonejunkie, whiterabittorg, To0 and Insaincain on HowardForums.com and XDA-Developers.\n\nI might be missing more people and if so feel free to email me.\n\nThese guys were the ones that figured out and helped develop the method we are all using here to allow Android devices to work properly on MetroPCS.\n\nEnjoy.</string>
     
     <!-- Status -->
     	<string name="status">Status</string>
@@ -36,20 +38,38 @@
     	
     	<string name="prefs_use_u2nl">Use u2nl</string>
     	<string name="prefs_use_u2nl_sry">Use u2nl binary to tunnel network connection through the proxy</string>
+    <!-- Preferences -->
+    
+    <!-- Custom Settings -->
+    	<string name="custom_settings">Custom Settings</string>
+    
+    	<string name="prefs_use_custom_proxy">Use custom proxy server</string>
+    	<string name="prefs_use_custom_proxy_sry">Use your own custom proxy server instead of MetroPCS\'s default</string>
     	
-    	<string name="prefs_use_custom_proxy">Use custom proxy</string>
-    	<string name="prefs_use_custom_proxy_sry">Use your own custom proxy server instead of MetroPCS</string>
-    	
-    	<string name="prefs_use_custom_proxy_error">Invalid ip address and/or port number. Cannot use custom proxy.</string>
+    	<string name="prefs_use_custom_proxy_error">Invalid ip address and/or port number. Cannot use custom proxy server.</string>
     	
     	<string name="prefs_custom_proxy">Custom proxy</string>
     	<string name="prefs_custom_proxy_sryOn">Using: %s</string>
     	<string name="prefs_custom_proxy_sryOff">Using default proxy: %s</string>
-	<string name="prefs_custom_proxy_invalid">Invalid proxy IP address and/or port</string>
+		<string name="prefs_custom_proxy_invalid">Invalid proxy IP address and/or port</string>
 
 		<string name="prefs_custom_proxy_port">Custom port</string>
     	<string name="prefs_custom_proxy_port_sryOn">Using: %s</string>
     	<string name="prefs_custom_proxy_port_sryOff">Using default port: %s</string>
-    <!-- Preferences -->
+    	
+    	<string name="prefs_use_custom_mms">Use custom MMS server</string>
+    	<string name="prefs_use_custom_mms_sry">Use your own custom MMS server instead of MetroPCS\'s default</string>
+    	
+    	<string name="prefs_use_custom_mms_error">Invalid ip address and/or port number. Cannot use custom MMS server.</string>
+    	
+    	<string name="prefs_custom_mms">Custom MMS server</string>
+    	<string name="prefs_custom_mms_sryOn">Using: %s</string>
+    	<string name="prefs_custom_mms_sryOff">Using default mms server: %s</string>
+		<string name="prefs_custom_mms_invalid">Invalid mms server IP address and/or port</string>
+
+		<string name="prefs_custom_mms_port">Custom MMS port</string>
+    	<string name="prefs_custom_mms_port_sryOn">Using: %s</string>
+    	<string name="prefs_custom_mms_port_sryOff">Using default port: %s</string>
+    <!-- Custom Settings -->
     
 </resources>

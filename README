@@ -5,16 +5,22 @@ It is made and pre-configured to work with Android phones that have been flashed
 
 It must be built with the system since its using android.uid.system sharedId in order to be able to write to secure settings.
 
-Have been tested and built for HTC EVO, Droid Incredible, and Motorola Droid (1).
+Have been tested and built for HTC EVO, Droid Incredible, and Motorola Droid 1.
 Made to work with CyanogenMod 6.0+
 
 
 
 TODO:
 
-- Give full credits to everyone that has helped to make this possible on the credits PreferenceScreen.
-- Renable ability to use custom proxy.
-- Ability to customize the mms server on the iptables.
 - Needs a better icon.
-- Improve startup/shutdown of u2nl binary, if possible.
+- Use sqlite database instead of Secure.Settings (If thinking about deploying to Android Market).
+- Check for u2nl binary, if not available install it, it's in the assets folder (If thinking about deploying to Android Market).
 - Document, organize and maybe improve configuration screen.
+
+
+CREDITS:
+
+Special thanks go out to Tracphonejunkie, whiterabittorg, To0 and Insaincain on HowardForums.com and XDA-Developers. (I might be missing more people and if so feel free to email me at velazcod@gmail.com)
+These guys were the ones that figured out and helped develop the method we are all using here to allow Android devices to work properly on MetroPCS.
+
+Enjoy.

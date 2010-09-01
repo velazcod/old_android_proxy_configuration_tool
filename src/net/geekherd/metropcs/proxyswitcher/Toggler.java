@@ -2,8 +2,6 @@ package net.geekherd.metropcs.proxyswitcher;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -22,6 +20,7 @@ public class Toggler extends BroadcastReceiver
 	private SharedPreferences preferences;
 	
 	private Boolean mUseCustomProxy;
+	private Boolean mUseCustomMMS;
 	private Boolean mUseU2NL;
 	
 	private String mCustomProxy;
@@ -55,7 +54,6 @@ public class Toggler extends BroadcastReceiver
 			try 
 			{
 				enableProxy();
-				enableU2NL();
 			} catch (Exception e) {
 				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
@@ -69,7 +67,17 @@ public class Toggler extends BroadcastReceiver
 			try 
 			{
 				disableProxy();
-				//disableU2NL(); //TODO: We might be able to let u2nl stay running even when on wifi
+			} catch (Exception e) {
+				Log.e(Configuration.TAG, "", e);
+				e.printStackTrace();
+				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
+			}
+		}
+		else if (action.equals(Configuration.ACTION_DEACTIVATE_PROXY))
+		{
+			try 
+			{
+				enableU2NL();
 			} catch (Exception e) {
 				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
@@ -84,13 +92,16 @@ public class Toggler extends BroadcastReceiver
 	private void loadPreferences()
 	{
 		mUseCustomProxy = preferences.
-			getBoolean(Configuration.PREF_USE_CUSTOM_PROXY, false);
+			getBoolean(Configuration.PREF_USE_CUSTOM_PROXY, Configuration.PREF_USE_CUSTOM_PROXY_DEFAULT);
 		
 		mCustomProxy = preferences.
 			getString(Configuration.PREF_PROXY, Configuration.PREF_PROXY_DEFAULT);
 		
 		mCustomProxyPort = preferences.
 			getString(Configuration.PREF_PROXY_PORT, Configuration.PREF_PROXY_PORT_DEFAULT);
+		
+		mUseCustomMMS = preferences.
+			getBoolean(Configuration.PREF_USE_CUSTOM_MMS, Configuration.PREF_USE_CUSTOM_MMS_DEFAULT);
 		
 		mCustomMMS = preferences.
 			getString(Configuration.PREF_MMS, Configuration.PREF_MMS_DEFAULT);
@@ -100,9 +111,6 @@ public class Toggler extends BroadcastReceiver
 		
 		mUseU2NL = preferences.getBoolean(Configuration.PREF_USE_U2NL, 
 				Configuration.PREF_USE_U2NL_DEFAULT);
-		
-		//TODO: use this better, need to fix issue on the method below.
-		//mInterface = getNetworkInterface();
 		
 		if (android.os.Build.DEVICE.equals("sholes"))
 			mInterface = Configuration.DEFAULT_INTERFACE_MOTO_SHOLES;
@@ -122,41 +130,24 @@ public class Toggler extends BroadcastReceiver
 			mHostname = mCustomProxy + ':' + mCustomProxyPort;
 			mProxy = mCustomProxy;
 			mPort = mCustomProxyPort;
-			
-			mMMS = mCustomMMS;
-			mMMSPort = mCustomMMSPort;
 		}
 		else
 		{
 			mHostname = Configuration.DEFAULT_PROXY + ':' + Configuration.DEFAULT_PROXY_PORT;
 			mProxy = Configuration.DEFAULT_PROXY;
 			mPort = Configuration.DEFAULT_PROXY_PORT;
-			
+		}
+		
+		if (mUseCustomMMS)
+		{
+			mMMS = mCustomMMS;
+			mMMSPort = mCustomMMSPort;
+		}
+		else
+		{
 			mMMS = Configuration.DEFAULT_MMS;
 			mMMSPort = Configuration.DEFAULT_MMS_PORT;
 		}
-	}
-	
-	@SuppressWarnings("unused")
-	private String getNetworkInterface()
-	{
-		//TODO: fix permission denied issue
-		
-		try {
-			String[] interfaces = Configuration.DataNetworkInterfaces;
-				
-			for (int i=0; i<interfaces.length; i++)
-			{
-				if (NetworkInterface.getByName(interfaces[i]) != null)
-					return interfaces[i];
-			}		
-		} catch (SocketException e) {
-			e.printStackTrace();
-			Log.e(Configuration.TAG, e.toString());
-			return Configuration.DEFAULT_INTERFACE;
-		}
-		
-		return Configuration.DEFAULT_INTERFACE;
 	}
 	
 	/*
@@ -235,8 +226,8 @@ public class Toggler extends BroadcastReceiver
 		try { os.writeBytes("iptables -X" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
-		//try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 -d " + mMMS + " --dport " + mMMSPort + " -j DNAT --to-destination " + mMMS + ":" + mMMSPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
-		//try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 -d " + mMMS + " --dport " + mMMSPort + " -j DNAT --to-destination " + mMMS + ":" + mMMSPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
 		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 --dport 80 -j DNAT --to-destination " + mProxy + ":" + mPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
@@ -254,8 +245,9 @@ public class Toggler extends BroadcastReceiver
 	}
 	
 	/*
-	 * Kill u2nl.
+	 * Kill u2nl. Unused at the moment
 	 */
+	@SuppressWarnings("unused")
 	private void disableU2NL()
 	{
 		if (!mUseU2NL)

@@ -11,6 +11,17 @@ public class BootReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent) 
 	{
+		/*
+		 * Startup U2NL binary no matter what
+		 */
+		Intent mU2NLIntent = new Intent(context, Toggler.class);
+		mU2NLIntent.setAction(Configuration.ACTION_ACTIVATE_U2NL);
+		context.sendBroadcast(mU2NLIntent);
+		
+		
+		/*
+		 * Activate proxy only if we are not connected to wifi, otherwise deactivate
+		 */
 		NetworkInfo info = (NetworkInfo)intent.
 			getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 		
@@ -18,22 +29,22 @@ public class BootReceiver extends BroadcastReceiver
 		{
 			if (info.getState().equals(NetworkInfo.State.CONNECTED))
 			{
-				Intent sIntent = new Intent(context, Toggler.class);
-				sIntent.setAction(Configuration.ACTION_DEACTIVATE_PROXY);
-				context.sendBroadcast(sIntent);
+				Intent mProxyIntent = new Intent(context, Toggler.class);
+				mProxyIntent.setAction(Configuration.ACTION_DEACTIVATE_PROXY);
+				context.sendBroadcast(mProxyIntent);
 			}
 			else
 			{
-				Intent sIntent = new Intent(context, Toggler.class);
-				sIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
-				context.sendBroadcast(sIntent);
+				Intent mProxyIntent = new Intent(context, Toggler.class);
+				mProxyIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
+				context.sendBroadcast(mProxyIntent);
 			}
 		}
 		else
 		{
-			Intent sIntent = new Intent(context, Toggler.class);
-			sIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
-			context.sendBroadcast(sIntent);
+			Intent mProxyIntent = new Intent(context, Toggler.class);
+			mProxyIntent.setAction(Configuration.ACTION_ACTIVATE_PROXY);
+			context.sendBroadcast(mProxyIntent);
 		}
 	}
 }

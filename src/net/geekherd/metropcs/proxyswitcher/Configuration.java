@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Proxy;
@@ -19,6 +21,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Toast;
 
 public class Configuration extends PreferenceActivity 
@@ -33,34 +36,35 @@ public class Configuration extends PreferenceActivity
 	 * 
 	 */
 	
-	
+	/** Default Settings **/
 	public final static String TAG = "MetroPCS-Proxy";
 	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com or wap.metropcs.com)
 	public final static String DEFAULT_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
-	public final static String DEFAULT_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com)
+	public final static String DEFAULT_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com) //TODO: update ip with correct one
 	public final static String DEFAULT_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
+	/** Default Settings **/
 
+	/** Network Interfaces **/
 	public final static String DEFAULT_INTERFACE = "rmnet0"; //DEFAULT INTERFACE USED BY IPTABLES
 	public final static String DEFAULT_INTERFACE_MOTO_SHOLES = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 PRE-FROYO
 	public final static String DEFAULT_INTERFACE_MOTO_SHOLES_FROYO = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 ON FROYO
 	public final static String DEFAULT_INTERFACE_HTC = "rmnet0"; //INTERFACE USED ON MOST HTC DEVICES
-	
-	public static String[] DataNetworkInterfaces =
-	{
-		DEFAULT_INTERFACE_MOTO_SHOLES,
-		DEFAULT_INTERFACE_MOTO_SHOLES_FROYO,
-		DEFAULT_INTERFACE_HTC
-	};
+	/** Network Interfaces **/
 	
 	public static String ACTION_ACTIVATE_PROXY = "ActivateProxy";
+	public static String ACTION_ACTIVATE_U2NL = "ActivateU2NL";
 	public static String ACTION_DEACTIVATE_PROXY = "DectivateProxy";
 	
-	/** Preferences Constants **/
+	/** Preference Screen Constants **/
 	public final static String PROXY_STATUS = "proxy_status";
+	
+	public final static String PREF_CREDITS = "prefs_credits";
 	
 	public final static String TOGGLE_ACTIVATE = "toggle_activate";
 	public final static String TOGGLE_DEACTIVATE = "toggle_deactivate";
+	/** Preference Screen Constants **/
 	
+	/** Preferences Constants **/
 	public final static String PREF_AUTO_SWITCH_ENABLED = "prefs_autoswitch_enabled";
 	public final static Boolean PREF_AUTO_SWITCH_ENABLED_DEFAULT = true;
 	
@@ -75,6 +79,9 @@ public class Configuration extends PreferenceActivity
 	
 	public final static String PREF_PROXY_PORT = "prefs_custom_proxy_port";
 	public final static String PREF_PROXY_PORT_DEFAULT = DEFAULT_PROXY_PORT;
+	
+	public final static String PREF_USE_CUSTOM_MMS = "prefs_use_custom_mms";
+	public final static Boolean PREF_USE_CUSTOM_MMS_DEFAULT = false;
 	
 	public final static String PREF_MMS = "prefs_custom_mms";
 	public final static String PREF_MMS_DEFAULT = DEFAULT_MMS;
@@ -94,6 +101,10 @@ public class Configuration extends PreferenceActivity
 	private EditTextPreference prefs_custom_proxy;
 	private EditTextPreference prefs_custom_proxy_port;
 	
+	private CheckBoxPreference prefs_use_custom_mms;
+	private EditTextPreference prefs_custom_mms;
+	private EditTextPreference prefs_custom_mms_port;
+	
 	private BroadcastReceiver mProxyChangeActionReceiver = new BroadcastReceiver()
 	{
     	@Override
@@ -106,7 +117,9 @@ public class Configuration extends PreferenceActivity
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
-        super.onCreate(savedInstanceState);
+    	requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    	super.onCreate(savedInstanceState);
+    	setProgressBarIndeterminateVisibility(true);
         addPreferencesFromResource(R.xml.configuration);
         
         proxy_status = (PreferenceScreen)findPreference("proxy_status");
@@ -122,6 +135,14 @@ public class Configuration extends PreferenceActivity
         prefs_use_custom_proxy.setOnPreferenceChangeListener(customProxyCheckboxListener);
         prefs_custom_proxy.setOnPreferenceChangeListener(customProxyEditTextListener);
         prefs_custom_proxy_port.setOnPreferenceChangeListener(customProxyPortEditTextListener);
+        
+        prefs_use_custom_mms = (CheckBoxPreference)findPreference("prefs_use_custom_mms");
+        prefs_custom_mms = (EditTextPreference)findPreference("prefs_custom_mms");
+        prefs_custom_mms_port = (EditTextPreference)findPreference("prefs_custom_mms_port");
+        
+        prefs_use_custom_mms.setOnPreferenceChangeListener(customMMSCheckboxListener);
+        prefs_custom_mms.setOnPreferenceChangeListener(customMMSEditTextListener);
+        prefs_custom_mms_port.setOnPreferenceChangeListener(customMMSPortEditTextListener);
     }
     
     @Override
@@ -130,6 +151,7 @@ public class Configuration extends PreferenceActivity
 		super.onResume();
 		
 		updateCustomProxySummary(prefs_use_custom_proxy.isChecked(), null, null);
+		updateCustomMMSSummary(prefs_use_custom_mms.isChecked(), null, null);
 		
 		new checkStatus().execute();
 		
@@ -156,6 +178,19 @@ public class Configuration extends PreferenceActivity
 				Toast.makeText(this, getString(R.string.prefs_use_custom_proxy_error), Toast.LENGTH_LONG).show();
 			}
 		}
+		
+		if (prefs_use_custom_mms.isChecked())
+		{
+			if (!testCustomMMSServer(null, null))
+			{
+				prefs_use_custom_mms.setChecked(false);
+				prefs_custom_mms.setText("");
+				prefs_custom_mms_port.setText("");
+				
+				Log.d(TAG, "Invalid ip address and/or port number. Cannot use custom MMS server.");
+				Toast.makeText(this, getString(R.string.prefs_use_custom_mms_error), Toast.LENGTH_LONG).show();
+			}
+		}
 	}
     
     @Override
@@ -175,6 +210,10 @@ public class Configuration extends PreferenceActivity
     		sIntent.setAction(ACTION_DEACTIVATE_PROXY);
     		sendBroadcast(sIntent);
     	}
+    	else if (PREF_CREDITS.equals(key))
+    	{
+    		showCredits();
+    	}
     	
     	return true;
     }
@@ -185,7 +224,8 @@ public class Configuration extends PreferenceActivity
     	toggle_deactivate.setEnabled(false);
 
     	prefs_use_u2nl.setEnabled(false);	
-    	//prefs_use_custom_proxy.setEnabled(false);
+    	prefs_use_custom_proxy.setEnabled(false);
+    	prefs_use_custom_mms.setEnabled(false);
     }
     
     private void enableToggles()
@@ -194,7 +234,8 @@ public class Configuration extends PreferenceActivity
     	toggle_deactivate.setEnabled(true);
 
     	prefs_use_u2nl.setEnabled(true);
-        //prefs_use_custom_proxy.setEnabled(true);
+        prefs_use_custom_proxy.setEnabled(true);
+        prefs_use_custom_mms.setEnabled(true);
     }
     
     private class checkStatus extends AsyncTask<Void, Void, Boolean> 
@@ -205,6 +246,7 @@ public class Configuration extends PreferenceActivity
     	protected void onPreExecute()
     	{
     		Log.d(TAG, "checking proxy/u2nl status");
+    		setProgressBarIndeterminateVisibility(true);
     		proxy_status.setSummary(getString(R.string.status_checking));
     		
     		disableToggles();
@@ -230,6 +272,7 @@ public class Configuration extends PreferenceActivity
     	
     	protected void onPostExecute(Boolean state)
     	{
+    		setProgressBarIndeterminateVisibility(false);
     		proxy_status.setSummary(String.format(
     				getString(R.string.proxy_status_sry), 
     				proxyStatus, 
@@ -238,127 +281,6 @@ public class Configuration extends PreferenceActivity
     		enableToggles();
     	}
 	}
-    
-    private Preference.OnPreferenceChangeListener 
-    	customProxyCheckboxListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomProxySummary(newValue, null, null);
-			
-			return true;
-		}
-	};
-	
-	private Preference.OnPreferenceChangeListener 
-		customProxyEditTextListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomProxySummary(true, newValue.toString(), null);
-			
-			return true;
-		}
-	};
-	
-	private Preference.OnPreferenceChangeListener 
-		customProxyPortEditTextListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomProxySummary(true, null, newValue.toString());
-			
-			return true;
-		}
-	};
-    
-    private void updateCustomProxySummary(Object value, String proxy, String port)
-    {
-    	String customProxy;
-    	String customPort;
-    	
-    	if (proxy != null)
-    		customProxy = proxy;
-    	else
-    		customProxy = prefs_custom_proxy.getText();
-    	
-    	if (port != null)
-    		customPort = port;
-    	else
-    		customPort = prefs_custom_proxy_port.getText();
-    	
-    	if (value.equals(true))
-    	{
-			if (testCustomProxy(customProxy, customPort))
-			{
-					Log.d(TAG, "custom proxy is valid!");
-				
-	    			prefs_custom_proxy.setSummary(String.format(
-	    					getString(R.string.prefs_custom_proxy_sryOn), 
-	    					customProxy));
-	    			prefs_custom_proxy_port.setSummary(String.format(
-	    					getString(R.string.prefs_custom_proxy_port_sryOn), 
-	    					customPort));
-			} else {
-				Log.d(TAG, "custom proxy is invalid!");
-				
-				prefs_custom_proxy.setSummary(getString(R.string.prefs_custom_proxy_invalid));
-				prefs_custom_proxy_port.setSummary(getString(R.string.prefs_custom_proxy_invalid));
-			}
-
-    	} else {
-    		prefs_custom_proxy.setSummary(String.format(
-    				getString(R.string.prefs_custom_proxy_sryOff), 
-    				DEFAULT_PROXY));
-    		prefs_custom_proxy_port.setSummary(String.format(
-    				getString(R.string.prefs_custom_proxy_port_sryOff), 
-    				DEFAULT_PROXY_PORT));
-    	}
-    }
-    
-    private boolean testCustomProxy(String proxy, String port)
-    {
-		Boolean validProxy = true;
-		
-		String customProxy;
-		String customPort;
-		
-		if (proxy !=null)
-			customProxy = proxy;
-		else
-			customProxy = prefs_custom_proxy.getText();
-		
-		
-		if (port != null)
-			customPort = port;
-		else
-			customPort = prefs_custom_proxy_port.getText();
-		
-		if (!validateIP(customProxy))
-		{
-			Log.e(TAG, "Invalid ip address");
-			validProxy = false;
-		}
-		
-		try
-		{
-			int portInt = Integer.parseInt(customPort);
-			
-			if (portInt < 0 || portInt > 65535)
-			{
-				Log.e(TAG, "Invalid port number");
-				validProxy = false;
-			}
-			
-		} catch (NumberFormatException npe)
-		{
-			npe.printStackTrace();
-			Log.e(TAG, "Invalid port number");
-			validProxy = false;
-		}
-		
-    	return validProxy;
-    }
     
     private boolean isProxyActive()
     {
@@ -413,6 +335,248 @@ public class Configuration extends PreferenceActivity
     	return state;
     }
     
+    private Preference.OnPreferenceChangeListener 
+		customProxyCheckboxListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(newValue, null, null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(true, newValue.toString(), null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyPortEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(true, null, newValue.toString());
+			
+			return true;
+		}
+	};
+	
+	private void updateCustomProxySummary(Object value, String proxy, String port)
+	{
+		String customProxy;
+		String customPort;
+		
+		if (proxy != null)
+			customProxy = proxy;
+		else
+			customProxy = prefs_custom_proxy.getText();
+		
+		if (port != null)
+			customPort = port;
+		else
+			customPort = prefs_custom_proxy_port.getText();
+		
+		if (value.equals(true))
+		{
+			if (testCustomProxy(customProxy, customPort))
+			{
+					Log.d(TAG, "custom proxy is valid!");
+				
+	    			prefs_custom_proxy.setSummary(String.format(
+	    					getString(R.string.prefs_custom_proxy_sryOn), 
+	    					customProxy));
+	    			prefs_custom_proxy_port.setSummary(String.format(
+	    					getString(R.string.prefs_custom_proxy_port_sryOn), 
+	    					customPort));
+			} else {
+				Log.d(TAG, "custom proxy is invalid!");
+				
+				prefs_custom_proxy.setSummary(getString(R.string.prefs_custom_proxy_invalid));
+				prefs_custom_proxy_port.setSummary(getString(R.string.prefs_custom_proxy_invalid));
+			}
+	
+		} else {
+			prefs_custom_proxy.setSummary(String.format(
+					getString(R.string.prefs_custom_proxy_sryOff), 
+					DEFAULT_PROXY));
+			prefs_custom_proxy_port.setSummary(String.format(
+					getString(R.string.prefs_custom_proxy_port_sryOff), 
+					DEFAULT_PROXY_PORT));
+		}
+	}
+	
+	private boolean testCustomProxy(String proxy, String port)
+	{
+		Boolean validProxy = true;
+		
+		String customProxy;
+		String customPort;
+		
+		if (proxy !=null)
+			customProxy = proxy;
+		else
+			customProxy = prefs_custom_proxy.getText();
+		
+		
+		if (port != null)
+			customPort = port;
+		else
+			customPort = prefs_custom_proxy_port.getText();
+		
+		if (!validateIP(customProxy))
+		{
+			Log.e(TAG, "Invalid ip address");
+			validProxy = false;
+		}
+		
+		try
+		{
+			int portInt = Integer.parseInt(customPort);
+			
+			if (portInt < 0 || portInt > 65535)
+			{
+				Log.e(TAG, "Invalid port number");
+				validProxy = false;
+			}
+			
+		} catch (NumberFormatException npe)
+		{
+			npe.printStackTrace();
+			Log.e(TAG, "Invalid port number");
+			validProxy = false;
+		}
+		
+		return validProxy;
+	}
+	
+    private Preference.OnPreferenceChangeListener 
+		customMMSCheckboxListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomMMSSummary(newValue, null, null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customMMSEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomMMSSummary(true, newValue.toString(), null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customMMSPortEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomMMSSummary(true, null, newValue.toString());
+			
+			return true;
+		}
+	};
+	
+	private void updateCustomMMSSummary(Object value, String server, String port)
+	{
+		String customProxy;
+		String customPort;
+		
+		if (server != null)
+			customProxy = server;
+		else
+			customProxy = prefs_custom_mms.getText();
+		
+		if (port != null)
+			customPort = port;
+		else
+			customPort = prefs_custom_mms_port.getText();
+		
+		if (value.equals(true))
+		{
+			if (testCustomProxy(customProxy, customPort))
+			{
+					Log.d(TAG, "custom MMS server is valid!");
+				
+					prefs_custom_mms.setSummary(String.format(
+	    					getString(R.string.prefs_custom_mms_sryOn), 
+	    					customProxy));
+	    			prefs_custom_mms_port.setSummary(String.format(
+	    					getString(R.string.prefs_custom_mms_port_sryOn), 
+	    					customPort));
+			} else {
+				Log.d(TAG, "custom mms is invalid!");
+				
+				prefs_custom_mms.setSummary(getString(R.string.prefs_custom_mms_invalid));
+				prefs_custom_mms_port.setSummary(getString(R.string.prefs_custom_mms_invalid));
+			}
+	
+		} else {
+			prefs_custom_mms.setSummary(String.format(
+					getString(R.string.prefs_custom_mms_sryOff), 
+					DEFAULT_MMS));
+			prefs_custom_mms_port.setSummary(String.format(
+					getString(R.string.prefs_custom_mms_port_sryOff), 
+					DEFAULT_MMS_PORT));
+		}
+	}
+	
+	private boolean testCustomMMSServer(String server, String port)
+	{
+		Boolean validProxy = true;
+		
+		String customProxy;
+		String customPort;
+		
+		if (server !=null)
+			customProxy = server;
+		else
+			customProxy = prefs_custom_mms.getText();
+		
+		
+		if (port != null)
+			customPort = port;
+		else
+			customPort = prefs_custom_mms_port.getText();
+		
+		if (!validateIP(customProxy))
+		{
+			Log.e(TAG, "Invalid ip address");
+			validProxy = false;
+		}
+		
+		try
+		{
+			int portInt = Integer.parseInt(customPort);
+			
+			if (portInt < 0 || portInt > 65535)
+			{
+				Log.e(TAG, "Invalid port number");
+				validProxy = false;
+			}
+			
+		} catch (NumberFormatException npe)
+		{
+			npe.printStackTrace();
+			Log.e(TAG, "Invalid port number");
+			validProxy = false;
+		}
+		
+		return validProxy;
+	}
+    
     private final static boolean validateIP(String ipAddress)
     {
         String[] parts = ipAddress.split( "\\." );
@@ -433,5 +597,19 @@ public class Configuration extends PreferenceActivity
         }
 
         return true;
+    }
+    
+    private void showCredits()
+    {
+    	AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+    	alertDialog.setTitle(this.getString(R.string.credits));
+    	alertDialog.setMessage(this.getString(R.string.credits_txt));
+    	alertDialog.setIcon(R.drawable.icon);
+    	alertDialog.setButton(this.getString(R.string.credits_ok), new DialogInterface.OnClickListener() {
+    		public void onClick(DialogInterface dialog, int which) {	
+    			return;
+    		}
+    	});
+    	alertDialog.show();
     }
 }
