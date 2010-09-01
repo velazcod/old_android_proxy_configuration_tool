@@ -2,6 +2,8 @@ package net.geekherd.metropcs.proxyswitcher;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -24,10 +26,15 @@ public class Toggler extends BroadcastReceiver
 	
 	private String mCustomProxy;
 	private String mCustomProxyPort;
+	private String mCustomMMS;
+	private String mCustomMMSPort;
 	
 	private String mHostname;
 	private String mProxy;
 	private String mPort;
+	
+	private String mMMS;
+	private String mMMSPort;
 
 	private String mInterface;	
 	
@@ -85,8 +92,17 @@ public class Toggler extends BroadcastReceiver
 		mCustomProxyPort = preferences.
 			getString(Configuration.PREF_PROXY_PORT, Configuration.PREF_PROXY_PORT_DEFAULT);
 		
+		mCustomMMS = preferences.
+			getString(Configuration.PREF_MMS, Configuration.PREF_MMS_DEFAULT);
+	
+		mCustomMMSPort = preferences.
+			getString(Configuration.PREF_MMS_PORT, Configuration.PREF_MMS_PORT_DEFAULT);
+		
 		mUseU2NL = preferences.getBoolean(Configuration.PREF_USE_U2NL, 
 				Configuration.PREF_USE_U2NL_DEFAULT);
+		
+		//TODO: use this better, need to fix issue on the method below.
+		//mInterface = getNetworkInterface();
 		
 		if (android.os.Build.DEVICE.equals("sholes"))
 			mInterface = Configuration.DEFAULT_INTERFACE_MOTO_SHOLES;
@@ -106,13 +122,41 @@ public class Toggler extends BroadcastReceiver
 			mHostname = mCustomProxy + ':' + mCustomProxyPort;
 			mProxy = mCustomProxy;
 			mPort = mCustomProxyPort;
+			
+			mMMS = mCustomMMS;
+			mMMSPort = mCustomMMSPort;
 		}
 		else
 		{
 			mHostname = Configuration.DEFAULT_PROXY + ':' + Configuration.DEFAULT_PROXY_PORT;
 			mProxy = Configuration.DEFAULT_PROXY;
 			mPort = Configuration.DEFAULT_PROXY_PORT;
+			
+			mMMS = Configuration.DEFAULT_MMS;
+			mMMSPort = Configuration.DEFAULT_MMS_PORT;
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	private String getNetworkInterface()
+	{
+		//TODO: fix permission denied issue
+		
+		try {
+			String[] interfaces = Configuration.DataNetworkInterfaces;
+				
+			for (int i=0; i<interfaces.length; i++)
+			{
+				if (NetworkInterface.getByName(interfaces[i]) != null)
+					return interfaces[i];
+			}		
+		} catch (SocketException e) {
+			e.printStackTrace();
+			Log.e(Configuration.TAG, e.toString());
+			return Configuration.DEFAULT_INTERFACE;
+		}
+		
+		return Configuration.DEFAULT_INTERFACE;
 	}
 	
 	/*
@@ -124,7 +168,11 @@ public class Toggler extends BroadcastReceiver
 		
 		ContentResolver res = context.getContentResolver();
 				
+		//TODO: use sqlite here instead, request su with ui 1000
+		
 		Settings.Secure.putString(res, Settings.Secure.HTTP_PROXY, mHostname);
+		Settings.Secure.putInt(res, "http_proxy_wifi_only", 0);
+		
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
@@ -137,13 +185,15 @@ public class Toggler extends BroadcastReceiver
 		
 		ContentResolver res = context.getContentResolver();
 		
+		//TODO: use sqlite here instead, request su with ui 1000
+		
 		//setting an empty string for the hostname disables proxy
 		Settings.Secure.putString(res, Settings.Secure.HTTP_PROXY, "");
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
 	/*
-	 * Start up u2nl binary and tunnel all connections thru proxy. Can be improved
+	 * Start up u2nl binary and tunnel all connections thru proxy.
 	 */
 	private void enableU2NL()
 	{
@@ -185,7 +235,13 @@ public class Toggler extends BroadcastReceiver
 		try { os.writeBytes("iptables -X" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
-		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 ! -d " + mProxy + " -j REDIRECT --to-port " + mPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		//try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 -d " + mMMS + " --dport " + mMMSPort + " -j DNAT --to-destination " + mMMS + ":" + mMMSPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		//try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		
+		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 --dport 80 -j DNAT --to-destination " + mProxy + ":" + mPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		
+		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 ! -d " + mProxy + " ! --dport " + mPort + " -j REDIRECT --to-port 1025\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
 		try { os.writeBytes("u2nl " + mProxy + " " + mPort + " 127.0.0.1 1025 >/dev/null 2>&1 &" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
@@ -198,7 +254,7 @@ public class Toggler extends BroadcastReceiver
 	}
 	
 	/*
-	 * Kill u2nl. Can be improved.
+	 * Kill u2nl.
 	 */
 	private void disableU2NL()
 	{
@@ -222,6 +278,9 @@ public class Toggler extends BroadcastReceiver
 		}
 		DataOutputStream os = new DataOutputStream(process.getOutputStream());
 		
+		try { os.writeBytes("killall u2nl" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		
 		try { os.writeBytes("iptables -P INPUT ACCEPT" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
@@ -238,9 +297,6 @@ public class Toggler extends BroadcastReceiver
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
 		try { os.writeBytes("iptables -X" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
-		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
-		
-		try { os.writeBytes("kill `ps|grep u2nl|grep -v grep|awk '{print $2}'`" + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
 		try { os.writeBytes("exit\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }

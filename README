@@ -13,6 +13,8 @@ Made to work with CyanogenMod 6.0+
 TODO:
 
 - Give full credits to everyone that has helped to make this possible on the credits PreferenceScreen.
+- Renable ability to use custom proxy.
+- Ability to customize the mms server on the iptables.
 - Needs a better icon.
 - Improve startup/shutdown of u2nl binary, if possible.
 - Document, organize and maybe improve configuration screen.

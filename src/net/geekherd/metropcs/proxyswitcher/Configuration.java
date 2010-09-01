@@ -34,13 +34,23 @@ public class Configuration extends PreferenceActivity
 	 */
 	
 	
-	public final static String TAG = "MetroPCS-ProxySwitcher";
-	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com)
+	public final static String TAG = "MetroPCS-Proxy";
+	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com or wap.metropcs.com)
 	public final static String DEFAULT_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
+	public final static String DEFAULT_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com)
+	public final static String DEFAULT_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
 
-	public final static String DEFAULT_INTERFACE = "rmnet0"; //INTERFACE USED BY IPTABLES
-	public final static String DEFAULT_INTERFACE_MOTO_SHOLES = "ppp0"; //INTERFACE USED ON MOTOROLA DROID
-	public final static String DEFAULT_INTERFACE_HTC = "rmnet0"; //INTERFACE USED ON HTC DROID INCREDIBLE
+	public final static String DEFAULT_INTERFACE = "rmnet0"; //DEFAULT INTERFACE USED BY IPTABLES
+	public final static String DEFAULT_INTERFACE_MOTO_SHOLES = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 PRE-FROYO
+	public final static String DEFAULT_INTERFACE_MOTO_SHOLES_FROYO = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 ON FROYO
+	public final static String DEFAULT_INTERFACE_HTC = "rmnet0"; //INTERFACE USED ON MOST HTC DEVICES
+	
+	public static String[] DataNetworkInterfaces =
+	{
+		DEFAULT_INTERFACE_MOTO_SHOLES,
+		DEFAULT_INTERFACE_MOTO_SHOLES_FROYO,
+		DEFAULT_INTERFACE_HTC
+	};
 	
 	public static String ACTION_ACTIVATE_PROXY = "ActivateProxy";
 	public static String ACTION_DEACTIVATE_PROXY = "DectivateProxy";
@@ -65,6 +75,12 @@ public class Configuration extends PreferenceActivity
 	
 	public final static String PREF_PROXY_PORT = "prefs_custom_proxy_port";
 	public final static String PREF_PROXY_PORT_DEFAULT = DEFAULT_PROXY_PORT;
+	
+	public final static String PREF_MMS = "prefs_custom_mms";
+	public final static String PREF_MMS_DEFAULT = DEFAULT_MMS;
+	
+	public final static String PREF_MMS_PORT = "prefs_custom_mms_port";
+	public final static String PREF_MMS_PORT_DEFAULT = DEFAULT_MMS_PORT;
 	/** Preferences Constants **/
 	
 	
@@ -168,8 +184,8 @@ public class Configuration extends PreferenceActivity
     	toggle_activate.setEnabled(false);
     	toggle_deactivate.setEnabled(false);
 
-	prefs_use_u2nl.setEnabled(false);	
-	prefs_use_custom_proxy.setEnabled(false);
+    	prefs_use_u2nl.setEnabled(false);	
+    	//prefs_use_custom_proxy.setEnabled(false);
     }
     
     private void enableToggles()
@@ -177,8 +193,8 @@ public class Configuration extends PreferenceActivity
     	toggle_activate.setEnabled(true);
     	toggle_deactivate.setEnabled(true);
 
-	prefs_use_u2nl.setEnabled(true);
-        prefs_use_custom_proxy.setEnabled(true);
+    	prefs_use_u2nl.setEnabled(true);
+        //prefs_use_custom_proxy.setEnabled(true);
     }
     
     private class checkStatus extends AsyncTask<Void, Void, Boolean> 
@@ -353,8 +369,9 @@ public class Configuration extends PreferenceActivity
 
     	Log.d(TAG, "currentProxy: " + currentProxy);
 
-    	if (!currentProxy.equals(""))
-    		state = true;
+    	if (currentProxy != null)
+    		if (!currentProxy.equals(""))
+    			state = true;
     	
     	return state;
     }

@@ -45,7 +45,8 @@
 			android:key="prefs_use_custom_proxy"
 			android:title="@string/prefs_use_custom_proxy"
 			android:summary="@string/prefs_use_custom_proxy_sry"
-			android:defaultValue="false" />
+			android:defaultValue="false"
+			android:enabled="false" />
 			
 		<EditTextPreference 
 			android:key="prefs_custom_proxy"
