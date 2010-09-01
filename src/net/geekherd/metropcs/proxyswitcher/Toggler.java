@@ -69,7 +69,7 @@ public class Toggler extends BroadcastReceiver
 			try 
 			{
 				disableProxy();
-				disableU2NL();
+				//disableU2NL(); //TODO: We might be able to let u2nl stay running even when on wifi
 			} catch (Exception e) {
 				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
