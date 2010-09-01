@@ -73,8 +73,10 @@ public class Toggler extends BroadcastReceiver
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
 		}
-		else if (action.equals(Configuration.ACTION_DEACTIVATE_PROXY))
+		else if (action.equals(Configuration.ACTION_ACTIVATE_U2NL))
 		{
+			Log.d(Configuration.TAG, "ACTION_ACTIVATE_U2NL action");
+			
 			try 
 			{
 				enableU2NL();
