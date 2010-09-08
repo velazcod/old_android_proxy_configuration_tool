@@ -47,13 +47,14 @@ public class Configuration extends PreferenceActivity
 	/** Network Interfaces **/
 	public final static String DEFAULT_INTERFACE = "rmnet0"; //DEFAULT INTERFACE USED BY IPTABLES
 	public final static String DEFAULT_INTERFACE_MOTO_SHOLES = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 PRE-FROYO
-	public final static String DEFAULT_INTERFACE_MOTO_SHOLES_FROYO = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 ON FROYO
+	public final static String DEFAULT_INTERFACE_MOTO_SHOLES_FROYO = "ppp0"; //INTERFACE USED ON MOTOROLA DROID 1 ON FROYO /*TODO: THIS IS NOT RIGHT! */
 	public final static String DEFAULT_INTERFACE_HTC = "rmnet0"; //INTERFACE USED ON MOST HTC DEVICES
 	/** Network Interfaces **/
 	
 	public static String ACTION_ACTIVATE_PROXY = "ActivateProxy";
 	public static String ACTION_ACTIVATE_U2NL = "ActivateU2NL";
 	public static String ACTION_DEACTIVATE_PROXY = "DectivateProxy";
+	public static String ACTION_DEACTIVATE_U2NL = "DeactivateU2NL";
 	
 	/** Preference Screen Constants **/
 	public final static String PROXY_STATUS = "proxy_status";

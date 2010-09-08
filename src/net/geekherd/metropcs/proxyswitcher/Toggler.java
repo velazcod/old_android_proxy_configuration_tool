@@ -55,7 +55,7 @@ public class Toggler extends BroadcastReceiver
 			{
 				enableProxy();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e);
+				Log.e(Configuration.TAG, "", e.toString());
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
@@ -68,7 +68,7 @@ public class Toggler extends BroadcastReceiver
 			{
 				disableProxy();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e);
+				Log.e(Configuration.TAG, "", e.toString());
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
@@ -81,7 +81,20 @@ public class Toggler extends BroadcastReceiver
 			{
 				enableU2NL();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e);
+				Log.e(Configuration.TAG, "", e.toString());
+				e.printStackTrace();
+				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
+			}
+		}
+		else if (action.equals(Configuration.ACTION_DEACTIVATE_U2NL))
+		{
+			Log.d(Configuration.TAG, "ACTION_DEACTIVATE_U2NL action");
+			
+			try 
+			{
+				disableU2NL();
+			} catch (Exception e) {
+				Log.e(Configuration.TAG, "", e.toString());
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
