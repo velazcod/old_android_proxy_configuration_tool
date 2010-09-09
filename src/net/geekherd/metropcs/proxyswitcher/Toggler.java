@@ -189,29 +189,6 @@ public class Toggler extends BroadcastReceiver
 			process = Runtime.getRuntime().exec("su 1000");
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
 			
-			
-			//THIS IS ONLY INTENDED FOR CM6 BUT IT'S NOT REALLY NECCESSARY
-			/*
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi', '');\"" + "\n");
-			os.flush();
-			
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"UPDATE secure SET value = '' WHERE name = 'http_proxy_wifi';\"" + "\n");
-			os.flush();
-			
-			
-			
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi_on', '0');\"" + "\n");
-			os.flush();
-			
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"UPDATE secure SET value = '0' WHERE name = 'http_proxy_wifi_on';\"" + "\n");
-			os.flush();
-			*/
-			
-			
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('" + Settings.Secure.HTTP_PROXY + "', '" + mHostname + "');\"" + "\n");
 			os.flush();
@@ -219,10 +196,6 @@ public class Toggler extends BroadcastReceiver
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"UPDATE secure SET value = '" + mHostname + "' WHERE name = '" + Settings.Secure.HTTP_PROXY + "';\"" + "\n");
 			os.flush();
-			
-			
-			context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
-			
 			
 			os.writeBytes("exit\n");
 		  	os.flush();
@@ -247,6 +220,8 @@ public class Toggler extends BroadcastReceiver
 			e.printStackTrace();
 			return;
 		}
+		
+		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
 	/*
@@ -261,29 +236,6 @@ public class Toggler extends BroadcastReceiver
 			process = Runtime.getRuntime().exec("su 1000");
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
 			
-			
-			//THIS IS ONLY INTENDED FOR CM6 BUT IT'S NOT REALLY NECCESSARY
-			/*
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi', '');\"" + "\n");
-			os.flush();
-			
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"UPDATE secure SET value = '' WHERE name = 'http_proxy_wifi';\"" + "\n");
-			os.flush();
-			
-			
-			
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi_on', '0');\"" + "\n");
-			os.flush();
-			
-			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
-					"\"UPDATE secure SET value = '0' WHERE name = 'http_proxy_wifi_on';\"" + "\n");
-			os.flush();
-			*/
-			
-			
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"INSERT OR IGNORE INTO secure (name, value) VALUES (" + Settings.Secure.HTTP_PROXY + ", '');\"" + "\n");
 			os.flush();
@@ -291,10 +243,6 @@ public class Toggler extends BroadcastReceiver
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"UPDATE secure SET value = '' WHERE name = '" + Settings.Secure.HTTP_PROXY + "';\"" + "\n");
 			os.flush();
-			
-			
-			context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
-			
 			
 			os.writeBytes("exit\n");
 		  	os.flush();
@@ -319,6 +267,8 @@ public class Toggler extends BroadcastReceiver
 			e.printStackTrace();
 			return;
 		}
+		
+		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
 	/*
