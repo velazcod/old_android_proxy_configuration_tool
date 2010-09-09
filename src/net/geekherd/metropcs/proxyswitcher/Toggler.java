@@ -34,7 +34,9 @@ public class Toggler extends BroadcastReceiver
 	private String mMMS;
 	private String mMMSPort;
 
-	private String mInterface;	
+	private String mInterface;
+	
+	private int sdkVersion;
 	
 	@Override
 	public void onReceive(Context context, Intent intent) 
@@ -45,6 +47,8 @@ public class Toggler extends BroadcastReceiver
 		loadPreferences();
 		
 		String action = intent.getAction();
+		
+		sdkVersion = Integer.parseInt(android.os.Build.VERSION.SDK);
 			
 		if (action.equals(Configuration.ACTION_ACTIVATE_PROXY))
 		{
@@ -126,8 +130,16 @@ public class Toggler extends BroadcastReceiver
 		mUseU2NL = preferences.getBoolean(Configuration.PREF_USE_U2NL, 
 				Configuration.PREF_USE_U2NL_DEFAULT);
 		
+		
 		if (android.os.Build.DEVICE.equals("sholes"))
-			mInterface = Configuration.DEFAULT_INTERFACE_MOTO_SHOLES;
+		{
+			//The Motorola Droid's kernel was slightly changed between 
+			//eclair and froyo and it sports a different network interface
+			if (sdkVersion >= 8)
+				mInterface = Configuration.DEFAULT_INTERFACE_MOTO_SHOLES_FROYO;
+			else
+				mInterface = Configuration.DEFAULT_INTERFACE_MOTO_SHOLES;
+		}
 		else if (android.os.Build.DEVICE.equals("inc"))
 			mInterface = Configuration.DEFAULT_INTERFACE_HTC;
 		else if (android.os.Build.DEVICE.equals("hero"))
@@ -136,6 +148,7 @@ public class Toggler extends BroadcastReceiver
 			mInterface = Configuration.DEFAULT_INTERFACE_HTC;
 		else
 			mInterface = Configuration.DEFAULT_INTERFACE;
+		
 		
 		Log.d(Configuration.TAG, "Interface for " + android.os.Build.DEVICE + ": " + mInterface);
 
@@ -177,6 +190,8 @@ public class Toggler extends BroadcastReceiver
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
 			
 			
+			//THIS IS ONLY INTENDED FOR CM6 BUT IT'S NOT REALLY NECCESSARY
+			/*
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi', '');\"" + "\n");
 			os.flush();
@@ -194,7 +209,7 @@ public class Toggler extends BroadcastReceiver
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"UPDATE secure SET value = '0' WHERE name = 'http_proxy_wifi_on';\"" + "\n");
 			os.flush();
-			
+			*/
 			
 			
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
@@ -206,8 +221,8 @@ public class Toggler extends BroadcastReceiver
 			os.flush();
 			
 			
-			os.writeBytes("sqlite" + "\n");
-			os.flush();
+			context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
+			
 			
 			os.writeBytes("exit\n");
 		  	os.flush();
@@ -232,8 +247,6 @@ public class Toggler extends BroadcastReceiver
 			e.printStackTrace();
 			return;
 		}
-		
-		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
 	/*
@@ -249,6 +262,8 @@ public class Toggler extends BroadcastReceiver
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
 			
 			
+			//THIS IS ONLY INTENDED FOR CM6 BUT IT'S NOT REALLY NECCESSARY
+			/*
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi', '');\"" + "\n");
 			os.flush();
@@ -266,7 +281,7 @@ public class Toggler extends BroadcastReceiver
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
 					"\"UPDATE secure SET value = '0' WHERE name = 'http_proxy_wifi_on';\"" + "\n");
 			os.flush();
-			
+			*/
 			
 			
 			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
@@ -278,8 +293,8 @@ public class Toggler extends BroadcastReceiver
 			os.flush();
 			
 			
-			os.writeBytes("sqlite" + "\n");
-			os.flush();
+			context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
+			
 			
 			os.writeBytes("exit\n");
 		  	os.flush();
@@ -304,8 +319,6 @@ public class Toggler extends BroadcastReceiver
 			e.printStackTrace();
 			return;
 		}
-		
-		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
 	/*
