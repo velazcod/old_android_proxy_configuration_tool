@@ -4,7 +4,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,7 +54,7 @@ public class Toggler extends BroadcastReceiver
 			{
 				enableProxy();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e.toString());
+				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
@@ -68,7 +67,7 @@ public class Toggler extends BroadcastReceiver
 			{
 				disableProxy();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e.toString());
+				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
@@ -81,7 +80,7 @@ public class Toggler extends BroadcastReceiver
 			{
 				enableU2NL();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e.toString());
+				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
@@ -94,7 +93,7 @@ public class Toggler extends BroadcastReceiver
 			{
 				disableU2NL();
 			} catch (Exception e) {
-				Log.e(Configuration.TAG, "", e.toString());
+				Log.e(Configuration.TAG, "", e);
 				e.printStackTrace();
 				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
 			}
@@ -148,9 +147,9 @@ public class Toggler extends BroadcastReceiver
 		}
 		else
 		{
-			mHostname = Configuration.DEFAULT_PROXY + ':' + Configuration.DEFAULT_PROXY_PORT;
-			mProxy = Configuration.DEFAULT_PROXY;
-			mPort = Configuration.DEFAULT_PROXY_PORT;
+			mHostname = Configuration.DEFAULT_METRO_PROXY + ':' + Configuration.DEFAULT_METRO_PROXY_PORT;
+			mProxy = Configuration.DEFAULT_METRO_PROXY;
+			mPort = Configuration.DEFAULT_METRO_PROXY_PORT;
 		}
 		
 		if (mUseCustomMMS)
@@ -160,8 +159,8 @@ public class Toggler extends BroadcastReceiver
 		}
 		else
 		{
-			mMMS = Configuration.DEFAULT_MMS;
-			mMMSPort = Configuration.DEFAULT_MMS_PORT;
+			mMMS = Configuration.DEFAULT_METRO_MMS;
+			mMMSPort = Configuration.DEFAULT_METRO_MMS_PORT;
 		}
 	}
 	
@@ -172,12 +171,67 @@ public class Toggler extends BroadcastReceiver
 	{
 		Log.d(Configuration.TAG, "Enabling proxy");
 		
-		ContentResolver res = context.getContentResolver();
-				
-		//TODO: use sqlite here instead, request su with ui 1000
-		
-		Settings.Secure.putString(res, Settings.Secure.HTTP_PROXY, mHostname);
-		Settings.Secure.putInt(res, "http_proxy_wifi_only", 0);
+		Process process = null;
+	    try {
+			process = Runtime.getRuntime().exec("su 1000");
+			DataOutputStream os = new DataOutputStream(process.getOutputStream());
+			
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi', '');\"" + "\n");
+			os.flush();
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"UPDATE secure SET value = '' WHERE name = 'http_proxy_wifi';\"" + "\n");
+			os.flush();
+			
+			
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi_on', '0');\"" + "\n");
+			os.flush();
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"UPDATE secure SET value = '0' WHERE name = 'http_proxy_wifi_on';\"" + "\n");
+			os.flush();
+			
+			
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('" + Settings.Secure.HTTP_PROXY + "', '" + mHostname + "');\"" + "\n");
+			os.flush();
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"UPDATE secure SET value = '" + mHostname + "' WHERE name = '" + Settings.Secure.HTTP_PROXY + "';\"" + "\n");
+			os.flush();
+			
+			
+			os.writeBytes("sqlite" + "\n");
+			os.flush();
+			
+			os.writeBytes("exit\n");
+		  	os.flush();
+		  	os.close();
+			process.waitFor();
+		} 
+	    catch (IOException e) 
+		{
+	    	Log.e(Configuration.TAG, "Error getting root access");
+			e.printStackTrace();
+			return;
+		}
+		catch (InterruptedException e)
+		{
+			Log.e(Configuration.TAG, "Error getting root access");
+			e.printStackTrace();
+			return;
+		}
+		catch (java.lang.RuntimeException e)
+		{
+			Log.e(Configuration.TAG, "Error getting root access");
+			e.printStackTrace();
+			return;
+		}
 		
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
@@ -189,12 +243,68 @@ public class Toggler extends BroadcastReceiver
 	{
 		Log.d(Configuration.TAG, "Disabling proxy");
 		
-		ContentResolver res = context.getContentResolver();
+		Process process = null;
+	    try {
+			process = Runtime.getRuntime().exec("su 1000");
+			DataOutputStream os = new DataOutputStream(process.getOutputStream());
+			
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi', '');\"" + "\n");
+			os.flush();
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"UPDATE secure SET value = '' WHERE name = 'http_proxy_wifi';\"" + "\n");
+			os.flush();
+			
+			
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"INSERT OR IGNORE INTO secure (name, value) VALUES ('http_proxy_wifi_on', '0');\"" + "\n");
+			os.flush();
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"UPDATE secure SET value = '0' WHERE name = 'http_proxy_wifi_on';\"" + "\n");
+			os.flush();
+			
+			
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"INSERT OR IGNORE INTO secure (name, value) VALUES (" + Settings.Secure.HTTP_PROXY + ", '');\"" + "\n");
+			os.flush();
+			
+			os.writeBytes("sqlite3 /data/data/com.android.providers.settings/databases/settings.db " +
+					"\"UPDATE secure SET value = '' WHERE name = '" + Settings.Secure.HTTP_PROXY + "';\"" + "\n");
+			os.flush();
+			
+			
+			os.writeBytes("sqlite" + "\n");
+			os.flush();
+			
+			os.writeBytes("exit\n");
+		  	os.flush();
+		  	os.close();
+			process.waitFor();
+		} 
+	    catch (IOException e) 
+		{
+	    	Log.e(Configuration.TAG, "Error getting root access");
+			e.printStackTrace();
+			return;
+		}
+		catch (InterruptedException e)
+		{
+			Log.e(Configuration.TAG, "Error getting root access");
+			e.printStackTrace();
+			return;
+		}
+		catch (java.lang.RuntimeException e)
+		{
+			Log.e(Configuration.TAG, "Error getting root access");
+			e.printStackTrace();
+			return;
+		}
 		
-		//TODO: use sqlite here instead, request su with ui 1000
-		
-		//setting an empty string for the hostname disables proxy
-		Settings.Secure.putString(res, Settings.Secure.HTTP_PROXY, "");
 		context.sendBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION));
 	}
 	
@@ -210,7 +320,7 @@ public class Toggler extends BroadcastReceiver
 		
 		Process process = null;
 	    try {
-			process = Runtime.getRuntime().exec("su");
+			process = Runtime.getRuntime().exec("su 1000");
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -244,7 +354,7 @@ public class Toggler extends BroadcastReceiver
 		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 -d " + mMMS + " --dport " + mMMSPort + " -j DNAT --to-destination " + mMMS + ":" + mMMSPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
-		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 --dport 80 -j DNAT --to-destination " + mProxy + ":" + mPort + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
+		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 --dport 80 -j DNAT --to-destination " + mHostname + "\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		try { os.flush(); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
 		
 		try { os.writeBytes("iptables -t nat -A OUTPUT -o " + mInterface + " -p 6 ! -d " + mProxy + " ! --dport " + mPort + " -j REDIRECT --to-port 1025\n"); } catch (IOException e) { Log.e(Configuration.TAG, "IOException: " + e); e.printStackTrace(); }
@@ -260,9 +370,8 @@ public class Toggler extends BroadcastReceiver
 	}
 	
 	/*
-	 * Kill u2nl. Unused at the moment
+	 * Kill u2nl.
 	 */
-	@SuppressWarnings("unused")
 	private void disableU2NL()
 	{
 		if (!mUseU2NL)
@@ -272,7 +381,7 @@ public class Toggler extends BroadcastReceiver
 		
 		Process process = null;
 	    try {
-			process = Runtime.getRuntime().exec("su");
+			process = Runtime.getRuntime().exec("su 1000");
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;

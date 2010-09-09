@@ -37,11 +37,16 @@ public class Configuration extends PreferenceActivity
 	 */
 	
 	/** Default Settings **/
-	public final static String TAG = "MetroPCS-Proxy";
-	public final static String DEFAULT_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com or wap.metropcs.com)
-	public final static String DEFAULT_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
-	public final static String DEFAULT_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com) //TODO: update ip with correct one
-	public final static String DEFAULT_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
+	public final static String TAG = "ProxySwitcher";
+	public final static String DEFAULT_METRO_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com or wap.metropcs.com)
+	public final static String DEFAULT_METRO_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
+	public final static String DEFAULT_METRO_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com) //TODO: update ip with correct one
+	public final static String DEFAULT_METRO_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
+	
+	public final static String DEFAULT_CRICKET_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com or wap.metropcs.com)
+	public final static String DEFAULT_CRICKET_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
+	public final static String DEFAULT_CRICKET_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com) //TODO: update ip with correct one
+	public final static String DEFAULT_CRICKET_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
 	/** Default Settings **/
 
 	/** Network Interfaces **/
@@ -76,19 +81,19 @@ public class Configuration extends PreferenceActivity
 	public final static Boolean PREF_USE_CUSTOM_PROXY_DEFAULT = false;
 	
 	public final static String PREF_PROXY = "prefs_custom_proxy";
-	public final static String PREF_PROXY_DEFAULT = DEFAULT_PROXY;
+	public final static String PREF_PROXY_DEFAULT = DEFAULT_METRO_PROXY;
 	
 	public final static String PREF_PROXY_PORT = "prefs_custom_proxy_port";
-	public final static String PREF_PROXY_PORT_DEFAULT = DEFAULT_PROXY_PORT;
+	public final static String PREF_PROXY_PORT_DEFAULT = DEFAULT_METRO_PROXY_PORT;
 	
 	public final static String PREF_USE_CUSTOM_MMS = "prefs_use_custom_mms";
 	public final static Boolean PREF_USE_CUSTOM_MMS_DEFAULT = false;
 	
 	public final static String PREF_MMS = "prefs_custom_mms";
-	public final static String PREF_MMS_DEFAULT = DEFAULT_MMS;
+	public final static String PREF_MMS_DEFAULT = DEFAULT_METRO_MMS;
 	
 	public final static String PREF_MMS_PORT = "prefs_custom_mms_port";
-	public final static String PREF_MMS_PORT_DEFAULT = DEFAULT_MMS_PORT;
+	public final static String PREF_MMS_PORT_DEFAULT = DEFAULT_METRO_MMS_PORT;
 	/** Preferences Constants **/
 	
 	
@@ -304,7 +309,7 @@ public class Configuration extends PreferenceActivity
     	Boolean state = false;
     	
     	try {
-			Process process = Runtime.getRuntime().exec("su");
+			Process process = Runtime.getRuntime().exec("su 1000");
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
 			BufferedReader osRes = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			
@@ -406,10 +411,10 @@ public class Configuration extends PreferenceActivity
 		} else {
 			prefs_custom_proxy.setSummary(String.format(
 					getString(R.string.prefs_custom_proxy_sryOff), 
-					DEFAULT_PROXY));
+					DEFAULT_METRO_PROXY));
 			prefs_custom_proxy_port.setSummary(String.format(
 					getString(R.string.prefs_custom_proxy_port_sryOff), 
-					DEFAULT_PROXY_PORT));
+					DEFAULT_METRO_PROXY_PORT));
 		}
 	}
 	
@@ -527,10 +532,10 @@ public class Configuration extends PreferenceActivity
 		} else {
 			prefs_custom_mms.setSummary(String.format(
 					getString(R.string.prefs_custom_mms_sryOff), 
-					DEFAULT_MMS));
+					DEFAULT_METRO_MMS));
 			prefs_custom_mms_port.setSummary(String.format(
 					getString(R.string.prefs_custom_mms_port_sryOff), 
-					DEFAULT_MMS_PORT));
+					DEFAULT_METRO_MMS_PORT));
 		}
 	}
 	
