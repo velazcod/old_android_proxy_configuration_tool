@@ -111,15 +111,6 @@ public class Configuration extends PreferenceActivity
 	private EditTextPreference prefs_custom_mms;
 	private EditTextPreference prefs_custom_mms_port;
 	
-	private BroadcastReceiver mProxyChangeActionReceiver = new BroadcastReceiver()
-	{
-    	@Override
-		public void onReceive(Context context, Intent intent) 
-		{
-    		new checkStatus().execute();
-		}
-	};
-	
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -151,6 +142,18 @@ public class Configuration extends PreferenceActivity
         prefs_custom_mms_port.setOnPreferenceChangeListener(customMMSPortEditTextListener);
     }
     
+    private BroadcastReceiver mProxyChangeActionReceiver = new BroadcastReceiver()
+	{
+    	@Override
+		public void onReceive(Context context, Intent intent) 
+		{
+    		new checkStatus().execute();
+		}
+	};
+    
+    /*
+     * As soon as the activity resumes, check for the state of the proxy/u2nl.
+     */
     @Override
 	protected void onResume()
 	{
@@ -162,9 +165,12 @@ public class Configuration extends PreferenceActivity
 		new checkStatus().execute();
 		
 		this.registerReceiver(this.mProxyChangeActionReceiver, 
-				new IntentFilter(Proxy.PROXY_CHANGE_ACTION));
+					new IntentFilter(Proxy.PROXY_CHANGE_ACTION));
 	}
     
+    /*
+     * Here we test the custom proxy/mms servers to see if they are valid.
+     */
     @Override
 	protected void onStop()
 	{
@@ -199,6 +205,9 @@ public class Configuration extends PreferenceActivity
 		}
 	}
     
+    /*
+     * This checks if a PreferenceScreen has been clicked on and acts accordingly.
+     */
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) 
     {
@@ -224,6 +233,10 @@ public class Configuration extends PreferenceActivity
     	return true;
     }
     
+    /*
+     * Used to temporarily disable some preferences while we
+     * check for the state of the proxy/u2nl using the ASyncTask.
+     */
     private void disableToggles()
     {
     	toggle_activate.setEnabled(false);
@@ -234,6 +247,9 @@ public class Configuration extends PreferenceActivity
     	prefs_use_custom_mms.setEnabled(false);
     }
     
+    /*
+     * Re-enable preferences.
+     */
     private void enableToggles()
     {
     	toggle_activate.setEnabled(true);
@@ -244,6 +260,11 @@ public class Configuration extends PreferenceActivity
         prefs_use_custom_mms.setEnabled(true);
     }
     
+    /*
+     * ASyncTask helps update the current state of the proxy 
+     * and u2nl when a change is made. (User activating/deactivating proxy/u2nl)
+     * or Wifi Changed BroadcastReceiver toggles it.
+     */
     private class checkStatus extends AsyncTask<Void, Void, Boolean> 
 	{
     	String proxyStatus = getString(R.string.status_inactive);
@@ -288,6 +309,9 @@ public class Configuration extends PreferenceActivity
     	}
 	}
     
+    /*
+     * Checks if a proxy server is currently set
+     */
     private boolean isProxyActive()
     {
     	Boolean state = false;
@@ -304,6 +328,11 @@ public class Configuration extends PreferenceActivity
     	return state;
     }
     
+    /*
+     * Checks if the u2nl program is running. 
+     * 
+     * There might be a better way for this.
+     */
     private boolean isU2NLActive()
     {
     	Boolean state = false;
@@ -340,40 +369,10 @@ public class Configuration extends PreferenceActivity
     	
     	return state;
     }
-    
-    private Preference.OnPreferenceChangeListener 
-		customProxyCheckboxListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomProxySummary(newValue, null, null);
-			
-			return true;
-		}
-	};
 	
-	private Preference.OnPreferenceChangeListener 
-		customProxyEditTextListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomProxySummary(true, newValue.toString(), null);
-			
-			return true;
-		}
-	};
-	
-	private Preference.OnPreferenceChangeListener 
-		customProxyPortEditTextListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomProxySummary(true, null, newValue.toString());
-			
-			return true;
-		}
-	};
-	
+	/*
+	 * Update the Preference summary with the used Proxy server/port
+	 */
 	private void updateCustomProxySummary(Object value, String proxy, String port)
 	{
 		String customProxy;
@@ -462,39 +461,9 @@ public class Configuration extends PreferenceActivity
 		return validProxy;
 	}
 	
-    private Preference.OnPreferenceChangeListener 
-		customMMSCheckboxListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomMMSSummary(newValue, null, null);
-			
-			return true;
-		}
-	};
-	
-	private Preference.OnPreferenceChangeListener 
-		customMMSEditTextListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomMMSSummary(true, newValue.toString(), null);
-			
-			return true;
-		}
-	};
-	
-	private Preference.OnPreferenceChangeListener 
-		customMMSPortEditTextListener = new Preference.OnPreferenceChangeListener() 
-	{
-		public boolean onPreferenceChange(Preference preference, Object newValue) 
-		{
-			updateCustomMMSSummary(true, null, newValue.toString());
-			
-			return true;
-		}
-	};
-	
+	/*
+	 * Update the Preference summary with the used MMS server/port
+	 */
 	private void updateCustomMMSSummary(Object value, String server, String port)
 	{
 		String customProxy;
@@ -539,6 +508,9 @@ public class Configuration extends PreferenceActivity
 		}
 	}
 	
+	/*
+	 * Method that helps validate the MMS server/port
+	 */
 	private boolean testCustomMMSServer(String server, String port)
 	{
 		Boolean validProxy = true;
@@ -582,7 +554,76 @@ public class Configuration extends PreferenceActivity
 		
 		return validProxy;
 	}
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyCheckboxListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(newValue, null, null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(true, newValue.toString(), null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customProxyPortEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomProxySummary(true, null, newValue.toString());
+			
+			return true;
+		}
+	};
+	
+    private Preference.OnPreferenceChangeListener 
+		customMMSCheckboxListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomMMSSummary(newValue, null, null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customMMSEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomMMSSummary(true, newValue.toString(), null);
+			
+			return true;
+		}
+	};
+	
+	private Preference.OnPreferenceChangeListener 
+		customMMSPortEditTextListener = new Preference.OnPreferenceChangeListener() 
+	{
+		public boolean onPreferenceChange(Preference preference, Object newValue) 
+		{
+			updateCustomMMSSummary(true, null, newValue.toString());
+			
+			return true;
+		}
+	};
     
+	/*
+	 * Method that helps validate IP addresses.
+	 */
     private final static boolean validateIP(String ipAddress)
     {
         String[] parts = ipAddress.split( "\\." );
@@ -605,6 +646,9 @@ public class Configuration extends PreferenceActivity
         return true;
     }
     
+    /*
+     * AlertDialog with special credits to special people :)
+     */
     private void showCredits()
     {
     	AlertDialog alertDialog = new AlertDialog.Builder(this).create();
