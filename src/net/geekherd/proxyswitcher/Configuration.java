@@ -1,4 +1,4 @@
-package net.geekherd.metropcs.proxyswitcher;
+package net.geekherd.proxyswitcher;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

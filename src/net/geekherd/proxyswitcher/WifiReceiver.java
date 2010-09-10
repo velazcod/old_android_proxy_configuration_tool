@@ -1,4 +1,4 @@
-package net.geekherd.metropcs.proxyswitcher;
+package net.geekherd.proxyswitcher;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

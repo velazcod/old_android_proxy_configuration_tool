@@ -6,8 +6,11 @@ It is made and pre-configured to work with Android phones that have been flashed
 
 TODO:
 
-- Needs a better icon.
+- Change package name.
 - Check for u2nl binary, if not available install it, it's in the assets folder.
+- Support for cricket (auto-disable use of u2nl if cricket is used, alert user it's not needed).
+- Ability to select if MMS server should be used on u2nl binary.
+- Needs a better icon.
 - Document, organize and maybe improve configuration screen.
 
 
