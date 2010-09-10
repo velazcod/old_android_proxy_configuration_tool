@@ -6,8 +6,8 @@ It is made and pre-configured to work with Android phones that have been flashed
 
 TODO:
 
+- BUG: Proxy actually not updating properly when setting it through the sqlite db.
 - Check for u2nl binary, if not available install it, it's in the assets folder.
-- Support for cricket (auto-disable use of u2nl if Cricket is used, alert and tell the user it's not needed).
 - Needs a better icon.
 - Document, organize and maybe improve configuration screen.
 
