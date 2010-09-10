@@ -333,7 +333,7 @@ public class Toggler extends BroadcastReceiver
 	}
 	
 	/*
-	 * Kill u2nl.
+	 * Kill all instances of u2nl.
 	 */
 	private void disableU2NL()
 	{
