@@ -43,10 +43,10 @@ public class Configuration extends PreferenceActivity
 	public final static String DEFAULT_METRO_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com) //TODO: update ip with correct one
 	public final static String DEFAULT_METRO_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
 	
-	public final static String DEFAULT_CRICKET_PROXY = "10.223.2.4"; //MetroPCS Proxy Server (proxy.metropcs.com or wap.metropcs.com)
-	public final static String DEFAULT_CRICKET_PROXY_PORT = "3128"; // MetroPCS Proxy Server Port
-	public final static String DEFAULT_CRICKET_MMS = "10.223.2.4"; //MetroPCS Proxy Server (mms.metropcs.com) //TODO: update ip with correct one
-	public final static String DEFAULT_CRICKET_MMS_PORT = "3128"; // MetroPCS Proxy Server Port
+	public final static String DEFAULT_CRICKET_PROXY = "10.132.25.254"; //Cricket Proxy Server
+	public final static String DEFAULT_CRICKET_PROXY_PORT = "8080"; // Cricket Proxy Server Port
+	public final static String DEFAULT_CRICKET_MMS = "10.132.25.254"; //Cricket Proxy Server //TODO: update ip with correct one
+	public final static String DEFAULT_CRICKET_MMS_PORT = "8080"; // Cricket Proxy Server Port
 	/** Default Settings **/
 
 	/** Network Interfaces **/
