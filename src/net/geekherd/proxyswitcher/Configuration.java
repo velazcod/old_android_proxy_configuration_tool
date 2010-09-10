@@ -11,13 +11,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Proxy;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
 import android.util.Log;
@@ -35,6 +38,8 @@ public class Configuration extends PreferenceActivity
 	 * Can be improved.
 	 * 
 	 */
+	
+	private SharedPreferences preferences;
 	
 	/** Default Settings **/
 	public final static String TAG = "ProxySwitcher";
@@ -73,6 +78,12 @@ public class Configuration extends PreferenceActivity
 	/** Preference Screen Constants **/
 	
 	/** Preferences Constants **/
+	public final static String CARRIER_METROPCS = "metropcs";
+	public final static String CARRIER_CRICKET = "cricket";
+	
+	public final static String PREF_CARRIER_SELECTION = "prefs_carrier_selection";
+	public final static String PREF_CARRIER_SELECTION_DEFAULT = CARRIER_METROPCS;
+	
 	public final static String PREF_AUTO_SWITCH_ENABLED = "prefs_autoswitch_enabled";
 	public final static Boolean PREF_AUTO_SWITCH_ENABLED_DEFAULT = true;
 	
@@ -106,6 +117,8 @@ public class Configuration extends PreferenceActivity
 	private PreferenceScreen toggle_activate;
 	private PreferenceScreen toggle_deactivate;
 
+	private ListPreference prefs_carrier_selection;
+	
 	private CheckBoxPreference prefs_use_u2nl;
 	private CheckBoxPreference prefs_use_mms_u2nl;
  
@@ -125,10 +138,14 @@ public class Configuration extends PreferenceActivity
     	setProgressBarIndeterminateVisibility(true);
         addPreferencesFromResource(R.xml.configuration);
         
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        
         proxy_status = (PreferenceScreen)findPreference("proxy_status");
         toggle_activate = (PreferenceScreen)findPreference("toggle_activate");
         toggle_deactivate = (PreferenceScreen)findPreference("toggle_deactivate");
-       
+        
+        prefs_carrier_selection = (ListPreference)findPreference("prefs_carrier_selection");
+        
         prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
         prefs_use_mms_u2nl = (CheckBoxPreference)findPreference("prefs_use_mms_u2nl");
  
@@ -165,6 +182,8 @@ public class Configuration extends PreferenceActivity
 	protected void onResume()
 	{
 		super.onResume();
+		
+		updateCarrierSelection();
 		
 		updateCustomProxySummary(prefs_use_custom_proxy.isChecked(), null, null);
 		updateCustomMMSSummary(prefs_use_custom_mms.isChecked(), null, null);
@@ -249,6 +268,8 @@ public class Configuration extends PreferenceActivity
     	toggle_activate.setEnabled(false);
     	toggle_deactivate.setEnabled(false);
 
+    	prefs_carrier_selection.setEnabled(false);
+    	
     	prefs_use_u2nl.setEnabled(false);
     	prefs_use_mms_u2nl.setEnabled(false);
     	prefs_use_custom_proxy.setEnabled(false);
@@ -262,6 +283,8 @@ public class Configuration extends PreferenceActivity
     {
     	toggle_activate.setEnabled(true);
     	toggle_deactivate.setEnabled(true);
+    	
+    	prefs_carrier_selection.setEnabled(true);
 
     	prefs_use_u2nl.setEnabled(true);
     	prefs_use_mms_u2nl.setEnabled(true);
@@ -379,6 +402,20 @@ public class Configuration extends PreferenceActivity
     	return state;
     }
 	
+    /*
+	 * Update the Preference summary with the used Proxy server/port
+	 */
+	private void updateCarrierSelection()
+	{
+		String carrier = preferences.
+				getString(Configuration.PREF_CARRIER_SELECTION, Configuration.PREF_CARRIER_SELECTION_DEFAULT);
+		
+		if (CARRIER_METROPCS.equals(carrier))
+			prefs_carrier_selection.setSummary(getString(R.string.prefs_carrier_metropcs));
+		else if (CARRIER_CRICKET.equals(carrier))
+			prefs_carrier_selection.setSummary(getString(R.string.prefs_carrier_cricket));
+	}
+    
 	/*
 	 * Update the Preference summary with the used Proxy server/port
 	 */

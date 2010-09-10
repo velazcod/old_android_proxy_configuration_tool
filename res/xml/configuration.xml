@@ -28,6 +28,13 @@
 	</PreferenceCategory>
 	
 	<PreferenceCategory android:title="@string/configuration" >
+	
+		<ListPreference
+ 			android:key="prefs_carrier_selection"
+ 			android:title="@string/prefs_carrier_selection"
+ 			android:entries="@array/prefs_carrier_selection_entries"
+ 			android:entryValues="@array/prefs_carrier_selection_values"
+ 			android:defaultValue="metropcs" />
 		
 		<CheckBoxPreference 
 			android:key="prefs_autoswitch_enabled"

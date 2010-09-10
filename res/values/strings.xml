@@ -33,6 +33,24 @@
     <!-- Preferences -->
     	<string name="configuration">Configuration</string>
     
+    	<!-- Carrier selection -->
+	    	<string name="prefs_carrier_selection">Select carrier</string>
+	    	
+	    	<string name="prefs_carrier_metropcs">MetroPCS</string>
+	    	<string name="prefs_carrier_cricket">Cricket</string>
+	    	
+		  	<string-array name="prefs_carrier_selection_entries">
+		  		<item>@string/prefs_carrier_metropcs</item>
+		  		<item>@string/prefs_carrier_cricket</item>
+			</string-array>
+			
+			<!-- Do not translate! -->
+			<string-array name="prefs_carrier_selection_values">
+				<item>metropcs</item>
+				<item>cricket</item>
+			</string-array>
+    	<!-- Carrier selection -->
+    
     	<string name="prefs_autoswitch_enabled">Auto-switch on Wifi</string>
     	<string name="prefs_autoswitch_enabled_sry">Activate when wifi is disabled, and deactivate when wifi is enabled.</string>
     	
