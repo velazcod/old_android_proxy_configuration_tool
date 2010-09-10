@@ -1,20 +1,13 @@
-MetroPCS Proxy Switcher
+Proxy Configuration Tool
 
-This "app" allows the phone to automatically switch proxy and u2nl binary on and off depending on Wi-fi state.
-It is made and pre-configured to work with Android phones that have been flashed to MetroPCS.
-
-It must be built with the system since its using android.uid.system sharedId in order to be able to write to secure settings.
-
-Have been tested and built for HTC EVO, Droid Incredible, and Motorola Droid 1.
-Made to work with CyanogenMod 6.0+
-
+This Android app allows the phone to automatically switch proxy and u2nl binary on and off depending on Wi-fi state.
+It is made and pre-configured to work with Android phones that have been flashed to MetroPCS (and soon Cricket will be supported too).
 
 
 TODO:
 
 - Needs a better icon.
-- Use sqlite database instead of Secure.Settings (If thinking about deploying to Android Market).
-- Check for u2nl binary, if not available install it, it's in the assets folder (If thinking about deploying to Android Market).
+- Check for u2nl binary, if not available install it, it's in the assets folder.
 - Document, organize and maybe improve configuration screen.
 
 

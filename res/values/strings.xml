@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MetroPCS Proxy Configuration</string>
+    <string name="app_name">Proxy Configuration Tool</string>
     
     <string name="credits">Credits</string>
     <string name="credits_ok">Ok</string>
