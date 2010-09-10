@@ -35,6 +35,7 @@
     
     	<!-- Carrier selection -->
 	    	<string name="prefs_carrier_selection">Select carrier</string>
+	    	<string name="prefs_carrier_selection_sry">Use preconfigured proxy for supported carriers</string>
 	    	
 	    	<string name="prefs_carrier_metropcs">MetroPCS</string>
 	    	<string name="prefs_carrier_cricket">Cricket</string>

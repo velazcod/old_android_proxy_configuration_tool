@@ -32,6 +32,7 @@
 		<ListPreference
  			android:key="prefs_carrier_selection"
  			android:title="@string/prefs_carrier_selection"
+ 			android:summary="@string/prefs_carrier_selection_sry"
  			android:entries="@array/prefs_carrier_selection_entries"
  			android:entryValues="@array/prefs_carrier_selection_values"
  			android:defaultValue="metropcs" />
