@@ -56,8 +56,10 @@ public class Configuration extends PreferenceActivity
 	public final static String DEFAULT_INTERFACE_HTC = "rmnet0"; //INTERFACE USED ON MOST HTC DEVICES
 	/** Network Interfaces **/
 	
+	public static String ACTION_ACTIVATE_ALL = "ActivateAll";
 	public static String ACTION_ACTIVATE_PROXY = "ActivateProxy";
 	public static String ACTION_ACTIVATE_U2NL = "ActivateU2NL";
+	public static String ACTION_DEACTIVATE_ALL = "DectivateAll";
 	public static String ACTION_DEACTIVATE_PROXY = "DectivateProxy";
 	public static String ACTION_DEACTIVATE_U2NL = "DeactivateU2NL";
 	
@@ -216,13 +218,13 @@ public class Configuration extends PreferenceActivity
     	if (TOGGLE_ACTIVATE.equals(key))
     	{	
     		Intent sIntent = new Intent(this, Toggler.class);
-    		sIntent.setAction(ACTION_ACTIVATE_PROXY);
+    		sIntent.setAction(ACTION_ACTIVATE_ALL);
     		sendBroadcast(sIntent);
     	} 
     	else if (TOGGLE_DEACTIVATE.equals(key))
     	{
     		Intent sIntent = new Intent(this, Toggler.class);
-    		sIntent.setAction(ACTION_DEACTIVATE_PROXY);
+    		sIntent.setAction(ACTION_DEACTIVATE_ALL);
     		sendBroadcast(sIntent);
     	}
     	else if (PREF_CREDITS.equals(key))

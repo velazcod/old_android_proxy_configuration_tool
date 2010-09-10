@@ -50,7 +50,35 @@ public class Toggler extends BroadcastReceiver
 		
 		sdkVersion = Integer.parseInt(android.os.Build.VERSION.SDK);
 			
-		if (action.equals(Configuration.ACTION_ACTIVATE_PROXY))
+		if (action.equals(Configuration.ACTION_ACTIVATE_ALL))
+		{
+			Log.d(Configuration.TAG, "ACTION_ACTIVATE_ALL action");
+			
+			try 
+			{
+				enableProxy();
+				enableU2NL();
+			} catch (Exception e) {
+				Log.e(Configuration.TAG, "", e);
+				e.printStackTrace();
+				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
+			}
+		}
+		else if (action.equals(Configuration.ACTION_DEACTIVATE_ALL))
+		{
+			Log.d(Configuration.TAG, "ACTION_DEACTIVATE_ALL action");
+			
+			try 
+			{
+				disableProxy();
+				disableU2NL();
+			} catch (Exception e) {
+				Log.e(Configuration.TAG, "", e);
+				e.printStackTrace();
+				Toast.makeText(context, context.getString(R.string.txt_root_error), Toast.LENGTH_LONG).show();
+			}
+		}
+		else if (action.equals(Configuration.ACTION_ACTIVATE_PROXY))
 		{
 			Log.d(Configuration.TAG, "ACTION_ACTIVATE_PROXY action");
 			
