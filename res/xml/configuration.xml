@@ -76,9 +76,16 @@
       		android:inputType="phone" />
       		
       	<CheckBoxPreference 
+			android:key="prefs_use_mms_u2nl"
+			android:title="@string/prefs_use_mms_u2nl"
+			android:summary="@string/prefs_use_mms_u2nl_sry"
+			android:defaultValue="true" />
+      		
+      	<CheckBoxPreference 
 			android:key="prefs_use_custom_mms"
 			android:title="@string/prefs_use_custom_mms"
 			android:summary="@string/prefs_use_custom_mms_sry"
+			android:dependency="prefs_use_mms_u2nl"
 			android:defaultValue="false" />
 			
 		<EditTextPreference 

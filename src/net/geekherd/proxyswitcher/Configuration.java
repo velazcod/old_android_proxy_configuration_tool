@@ -88,6 +88,9 @@ public class Configuration extends PreferenceActivity
 	public final static String PREF_PROXY_PORT = "prefs_custom_proxy_port";
 	public final static String PREF_PROXY_PORT_DEFAULT = DEFAULT_METRO_PROXY_PORT;
 	
+	public final static String PREF_USE_MMS_U2NL = "prefs_use_mms_u2nl";
+	public final static Boolean PREF_USE_MMS_U2NL_DEFAULT = true;
+	
 	public final static String PREF_USE_CUSTOM_MMS = "prefs_use_custom_mms";
 	public final static Boolean PREF_USE_CUSTOM_MMS_DEFAULT = false;
 	
@@ -103,7 +106,8 @@ public class Configuration extends PreferenceActivity
 	private PreferenceScreen toggle_activate;
 	private PreferenceScreen toggle_deactivate;
 
-	private CheckBoxPreference prefs_use_u2nl;  
+	private CheckBoxPreference prefs_use_u2nl;
+	private CheckBoxPreference prefs_use_mms_u2nl;
  
 	private CheckBoxPreference prefs_use_custom_proxy;
 	private EditTextPreference prefs_custom_proxy;
@@ -126,6 +130,7 @@ public class Configuration extends PreferenceActivity
         toggle_deactivate = (PreferenceScreen)findPreference("toggle_deactivate");
        
         prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
+        prefs_use_mms_u2nl = (CheckBoxPreference)findPreference("prefs_use_mms_u2nl");
  
         prefs_use_custom_proxy = (CheckBoxPreference)findPreference("prefs_use_custom_proxy");
         prefs_custom_proxy = (EditTextPreference)findPreference("prefs_custom_proxy");
@@ -244,7 +249,8 @@ public class Configuration extends PreferenceActivity
     	toggle_activate.setEnabled(false);
     	toggle_deactivate.setEnabled(false);
 
-    	prefs_use_u2nl.setEnabled(false);	
+    	prefs_use_u2nl.setEnabled(false);
+    	prefs_use_mms_u2nl.setEnabled(false);
     	prefs_use_custom_proxy.setEnabled(false);
     	prefs_use_custom_mms.setEnabled(false);
     }
@@ -258,6 +264,7 @@ public class Configuration extends PreferenceActivity
     	toggle_deactivate.setEnabled(true);
 
     	prefs_use_u2nl.setEnabled(true);
+    	prefs_use_mms_u2nl.setEnabled(true);
         prefs_use_custom_proxy.setEnabled(true);
         prefs_use_custom_mms.setEnabled(true);
     }

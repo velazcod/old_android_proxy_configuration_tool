@@ -8,7 +8,6 @@ TODO:
 
 - Check for u2nl binary, if not available install it, it's in the assets folder.
 - Support for cricket (auto-disable use of u2nl if Cricket is used, alert and tell the user it's not needed).
-- Ability to select if MMS server should be used on u2nl binary.
 - Needs a better icon.
 - Document, organize and maybe improve configuration screen.
 
@@ -16,6 +15,6 @@ TODO:
 CREDITS:
 
 Special thanks go out to Tracphonejunkie, whiterabittorg, To0 and Insaincain on HowardForums.com and XDA-Developers. (I might be missing more people and if so feel free to email me at velazcod@gmail.com)
-These guys were the ones that figured out and helped develop the method we are all using here to allow Android devices to work properly on MetroPCS.
+These guys were the ones that figured out and helped develop the method we are all using here to allow Android devices to work properly on MetroPCS and Cricket.
 
 Enjoy.

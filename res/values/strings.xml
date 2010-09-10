@@ -57,6 +57,9 @@
     	<string name="prefs_custom_proxy_port_sryOn">Using: %s</string>
     	<string name="prefs_custom_proxy_port_sryOff">Using default port: %s</string>
     	
+    	<string name="prefs_use_mms_u2nl">Use MMS server on u2nl</string>
+    	<string name="prefs_use_mms_u2nl_sry">Also tunnel MMS through u2nl</string>
+    	
     	<string name="prefs_use_custom_mms">Use custom MMS server</string>
     	<string name="prefs_use_custom_mms_sry">Use your own custom MMS server instead of MetroPCS\'s default</string>
     	
