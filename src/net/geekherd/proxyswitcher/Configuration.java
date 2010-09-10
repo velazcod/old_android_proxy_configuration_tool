@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
@@ -112,6 +113,9 @@ public class Configuration extends PreferenceActivity
 	private PreferenceScreen toggle_activate;
 	private PreferenceScreen toggle_deactivate;
 	
+	private CheckBoxPreference prefs_autoswitch_enabled;
+	private ListPreference prefs_carrier_selection;
+	
 	private CheckBoxPreference prefs_use_u2nl;
 	private CheckBoxPreference prefs_use_mms_u2nl;
  
@@ -134,6 +138,10 @@ public class Configuration extends PreferenceActivity
         proxy_status = (PreferenceScreen)findPreference("proxy_status");
         toggle_activate = (PreferenceScreen)findPreference("toggle_activate");
         toggle_deactivate = (PreferenceScreen)findPreference("toggle_deactivate");
+        
+        prefs_autoswitch_enabled = (CheckBoxPreference)findPreference("prefs_autoswitch_enabled");
+        
+        prefs_carrier_selection = (ListPreference)findPreference("prefs_carrier_selection");
         
         prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
         prefs_use_mms_u2nl = (CheckBoxPreference)findPreference("prefs_use_mms_u2nl");
@@ -255,6 +263,9 @@ public class Configuration extends PreferenceActivity
     	toggle_activate.setEnabled(false);
     	toggle_deactivate.setEnabled(false);
     	
+    	prefs_autoswitch_enabled.setEnabled(false);
+    	prefs_carrier_selection.setEnabled(false);
+    	
     	prefs_use_u2nl.setEnabled(false);
     	prefs_use_mms_u2nl.setEnabled(false);
     	prefs_use_custom_proxy.setEnabled(false);
@@ -269,6 +280,9 @@ public class Configuration extends PreferenceActivity
     	toggle_activate.setEnabled(true);
     	toggle_deactivate.setEnabled(true);
 
+    	prefs_autoswitch_enabled.setEnabled(true);
+    	prefs_carrier_selection.setEnabled(true);
+    	
     	prefs_use_u2nl.setEnabled(true);
     	prefs_use_mms_u2nl.setEnabled(true);
         prefs_use_custom_proxy.setEnabled(true);
