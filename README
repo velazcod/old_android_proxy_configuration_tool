@@ -7,9 +7,20 @@ It is made and pre-configured to work with Android phones that have been flashed
 TODO:
 
 - BUG: Proxy actually not updating properly when setting it through the sqlite db.
-- Check for u2nl binary, if not available install it, it's in the assets folder.
-- Needs a better icon.
+- Move the Custom settings to a different screen.
+
+- Find out the correct ip for the mms proxy server for both MetroPCS and Cricket.
+- Find out the correct network interface used by the Motorola Droid on FroYo.
+- Find out the correct eri.xml file for cricket.
+
+- Setup screen first time it runs & check for the following on every boot.
+	- Check build.prop and modify it if it's needed (ask for restart if installed)
+	- Check /data/eri.xml and install the new one if it's needed (
+	- Check for u2nl binary, if not available install it in /system/bin/, it's in the assets folder. (ask for restart if installed)
+	- Check for sqlite3 binary, if not available install it in /system/xbin/, it's in the assets folder. (ask for restart if installed)
+	
 - Document, organize and maybe improve configuration screen.
+- Needs a better icon.
 
 
 CREDITS:
