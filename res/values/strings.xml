@@ -74,7 +74,8 @@
     <!-- Preferences -->
     
     <!-- Custom Settings -->
-    	<string name="custom_settings">Custom Settings</string>
+    	<string name="custom_settings">Custom servers</string>
+    	<string name="custom_settings_sry">Use a custom proxy/mms server</string>
     
     	<string name="prefs_use_custom_proxy">Use custom proxy server</string>
     	<string name="prefs_use_custom_proxy_sry">Use your own custom proxy server instead of MetroPCS\'s default</string>

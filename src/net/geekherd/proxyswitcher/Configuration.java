@@ -133,8 +133,9 @@ public class Configuration extends PreferenceActivity
 	private ListPreference prefs_carrier_selection;
 	
 	private CheckBoxPreference prefs_use_u2nl;
-	private CheckBoxPreference prefs_use_mms_u2nl;
  
+	private PreferenceScreen prefs_custom_settings;
+	
 	private CheckBoxPreference prefs_use_custom_proxy;
 	private EditTextPreference prefs_custom_proxy;
 	private EditTextPreference prefs_custom_proxy_port;
@@ -160,7 +161,8 @@ public class Configuration extends PreferenceActivity
         prefs_carrier_selection = (ListPreference)findPreference("prefs_carrier_selection");
         
         prefs_use_u2nl = (CheckBoxPreference)findPreference("prefs_use_u2nl");
-        prefs_use_mms_u2nl = (CheckBoxPreference)findPreference("prefs_use_mms_u2nl");
+        
+        prefs_custom_settings = (PreferenceScreen)findPreference("prefs_custom_settings");
  
         prefs_use_custom_proxy = (CheckBoxPreference)findPreference("prefs_use_custom_proxy");
         prefs_custom_proxy = (EditTextPreference)findPreference("prefs_custom_proxy");
@@ -281,11 +283,8 @@ public class Configuration extends PreferenceActivity
     	
     	prefs_autoswitch_enabled.setEnabled(false);
     	prefs_carrier_selection.setEnabled(false);
-    	
     	prefs_use_u2nl.setEnabled(false);
-    	prefs_use_mms_u2nl.setEnabled(false);
-    	prefs_use_custom_proxy.setEnabled(false);
-    	prefs_use_custom_mms.setEnabled(false);
+    	prefs_custom_settings.setEnabled(false);
     }
     
     /*
@@ -298,11 +297,8 @@ public class Configuration extends PreferenceActivity
 
     	prefs_autoswitch_enabled.setEnabled(true);
     	prefs_carrier_selection.setEnabled(true);
-    	
     	prefs_use_u2nl.setEnabled(true);
-    	prefs_use_mms_u2nl.setEnabled(true);
-        prefs_use_custom_proxy.setEnabled(true);
-        prefs_use_custom_mms.setEnabled(true);
+    	prefs_custom_settings.setEnabled(true);
     }
     
     /*

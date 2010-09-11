@@ -65,7 +65,10 @@
 			
 	</PreferenceCategory>
 	
-	<PreferenceCategory android:title="@string/custom_settings" >
+	<PreferenceScreen
+		android:key="prefs_custom_settings" 
+		android:title="@string/custom_settings"
+		android:summary="@string/prefs_use_custom_proxy_sry" >
 			
 		<CheckBoxPreference 
 			android:key="prefs_use_custom_proxy"
@@ -134,7 +137,7 @@
       		android:digits="0123456789"
       		android:inputType="phone" />
 	
-	</PreferenceCategory>
+	</PreferenceScreen>
 	
 	<PreferenceCategory android:title="@string/credits" >
 	
