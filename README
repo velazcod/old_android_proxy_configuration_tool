@@ -7,15 +7,15 @@ It is made and pre-configured to work with Android phones that have been flashed
 TODO:
 
 - BUG: Proxy actually not updating properly when setting it through the sqlite db.
-- Move the Custom settings to a different screen.
 
 - Find out the correct ip for the mms proxy server for both MetroPCS and Cricket.
 - Find out the correct network interface used by the Motorola Droid on FroYo.
 - Find out the correct eri.xml file for cricket.
 
 - Setup screen first time it runs & check for the following on every boot.
-	- Check build.prop and modify it if it's needed (ask for restart if installed)
-	- Check /data/eri.xml and install the new one if it's needed (
+	- Automatically setup APN.
+	- Check build.prop and modify it if it's needed (backup too) (ask for restart if modified)
+	- Check /data/eri.xml and install the new one if it's needed (backup too) (ask for restart if installed)
 	- Check for u2nl binary, if not available install it in /system/bin/, it's in the assets folder. (ask for restart if installed)
 	- Check for sqlite3 binary, if not available install it in /system/xbin/, it's in the assets folder. (ask for restart if installed)
 	
@@ -26,7 +26,7 @@ TODO:
 LICENSE:
 
 Fully open sourced and licensed under the Apache 2.0 license (http://www.apache.org/licenses/LICENSE-2.0)
-Source code found here: https://github.com/velazcod/android_proxy_configuration_tool
+Source code and main repo can be found here: https://github.com/velazcod/android_proxy_configuration_tool
 
 
 
