@@ -18,7 +18,7 @@
       android:versionCode="20101109"
       android:versionName="1.0 Alpha 2">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".Configuration"
+        <activity android:name="net.geekherd.proxyswitcher.Configuration"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,13 +26,13 @@
             </intent-filter>
         </activity>
 		
-		<receiver android:name=".BootReceiver">
+		<receiver android:name="net.geekherd.proxyswitcher.BootReceiver">
 			<intent-filter> 
 				<action android:name="android.intent.action.BOOT_COMPLETED"/> 
 			</intent-filter> 
 		</receiver>
 		
-		<receiver android:name=".WifiReceiver">
+		<receiver android:name="net.geekherd.proxyswitcher.WifiReceiver">
 			<intent-filter> 
 				<action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
 				<action android:name="android.net.wifi.STATE_CHANGE" />
@@ -40,7 +40,7 @@
 			</intent-filter> 
 		</receiver>
 		
-		<receiver android:name=".Toggler">
+		<receiver android:name="net.geekherd.proxyswitcher.Toggler">
 	        	<intent-filter>
 					<action android:name="net.geekherd.metropcs.proxyswitcher.Configuration.ACTION_ACTIVATE_PROXY" />
 					<action android:name="net.geekherd.metropcs.proxyswitcher.Configuration.ACTION_DEACTIVATE_PROXY" />
