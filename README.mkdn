@@ -1,5 +1,5 @@
-Proxy Configuration Tool
-=========================
+Proxy Configuration Tool for Alternate Carriers
+===============================================
 
 This Android app allows the phone to automatically switch proxy and u2nl binary on and off depending on Wi-fi state.    
 
@@ -19,7 +19,8 @@ TODO:
 	* Check build.prop and modify it if it's needed (backup too) (ask for restart if modified)
 	* Check /data/eri.xml and install the new one if it's needed (backup too) (ask for restart if installed)
 	* Check for u2nl binary, if not available install it in /system/bin/, it's in the assets folder. (ask for restart if installed)
-	* Check for sqlite3 binary, if not available install it in /system/xbin/, it's in the assets folder. (ask for restart if installed)    
+	* Check for sqlite3 binary, if not available install it in /system/xbin/, it's in the assets folder. (ask for restart if installed)
+	* Drop database tables and replace them with appropriate Carrier Settings in: /data/data/com.android.providers.telephony/databases/telephony.db    
 	
 * Document, organize and maybe improve configuration screen.
 * Needs a better icon.    
